@@ -30,15 +30,16 @@ statement image or use the PDF path.
 
 ## Workflow
 
-`main` is protected. You cannot push to it directly. Everything lands through a
-pull request.
+`main` stays linear, and changes land through pull requests — don't commit to
+`main` directly.
 
 1. Branch off `main`. Name it for the work: `fix/duplicate-detection`,
    `feat/csv-import`.
 2. Make the change. Keep it focused — one concern per PR.
 3. Run the tests (see below). Green before you open the PR.
 4. Open a PR against `main`. Describe what changed and why, and link any issue.
-5. Get a review. Address comments. Once approved and checks pass, merge.
+5. Merge with **Squash** or **Rebase** (merge commits are disabled, so history
+   stays linear). The branch is deleted automatically on merge.
 
 Keep PRs small. A 200-line PR gets a real review; a 2,000-line one gets a
 rubber stamp, and that helps no one.
