@@ -1,0 +1,35 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Release artifacts
+*.xcarchive
+*.ipa
+*.dSYM.zip
+
+# App Store Connect API keys — never commit these
+AuthKey_*.p8
+
+# Xcode per-user data (keep shared schemes, ignore user-specific state)
+xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# CocoaPods / Carthage (not used, but ignore if added later)
+Pods/
+Carthage/Build/
+
+# Claude Code / skills tooling (local, not project source)
+.agents/
+skills-lock.json

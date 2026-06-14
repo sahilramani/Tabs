@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Export options for an App Store Connect (TestFlight / App Store) build.
+  Used by `make export`. Signing is automatic, so Xcode resolves the
+  distribution certificate and provisioning profile from your account.
+
+  `manageAppVersionAndBuildNumber` is false so the build number stamped at
+  archive time (CURRENT_PROJECT_VERSION) is the one uploaded, rather than
+  Xcode auto-bumping it.
+
+  If your account belongs to more than one team, add a <key>teamID</key>
+  entry with your 10-character Team ID.
+-->
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>destination</key>
+	<string>export</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<key>manageAppVersionAndBuildNumber</key>
+	<false/>
+</dict>
+</plist>

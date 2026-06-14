@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tabs — keep tabs on your subscriptions</title>
+<meta name="description" content="Tabs is a privacy-first iOS app that finds your subscriptions by scanning bank statements — 100% on-device. Your financial data never leaves your phone." />
+<meta property="og:title" content="Tabs — keep tabs on your subscriptions" />
+<meta property="og:description" content="Find recurring charges by scanning bank statements, entirely on-device. No accounts, no servers, no tracking." />
+<meta property="og:image" content="branding/social-1280x640.png" />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/png" href="branding/logo-512.png" />
+<style>
+  :root {
+    --green: #30d158;
+    --green-deep: #1fa64c;
+    --mint: #d9ffe4;
+    --bg: #0a0f0c;
+    --bg-elev: #131d17;
+    --bg-card: #16221b;
+    --field-top: #17291f;
+    --line: rgba(255,255,255,0.08);
+    --label: #f2f5f3;
+    --secondary: #9aa8a0;
+    --tertiary: #69766e;
+    --radius: 20px;
+    --maxw: 960px;
+    font-synthesis: none;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 700px at 18% -8%, rgba(48,209,88,0.16), transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, rgba(31,166,76,0.10), transparent 55%),
+      var(--bg);
+    color: var(--label);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* Header / nav */
+  header.nav {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(10,15,12,0.7);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { display: flex; align-items: center; gap: 12px; height: 60px; }
+  .nav-inner img { width: 28px; height: 28px; border-radius: 7px; }
+  .nav-inner .name { font-weight: 700; letter-spacing: -0.01em; }
+  .nav-inner .spacer { flex: 1; }
+  .nav-links a { color: var(--secondary); font-size: 14px; font-weight: 500; margin-left: 22px; }
+  .nav-links a:hover { color: var(--label); text-decoration: none; }
+  @media (max-width: 560px) { .nav-links a:not(.primary) { display: none; } }
+  .primary {
+    background: var(--green); color: #04140a !important;
+    padding: 7px 14px; border-radius: 980px; font-weight: 600;
+  }
+  .primary:hover { background: var(--mint); text-decoration: none; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 88px 0 64px; }
+  .hero .logo {
+    width: 116px; height: 116px; border-radius: 26px; margin-bottom: 28px;
+    box-shadow: 0 20px 60px rgba(48,209,88,0.25), 0 0 0 1px var(--line);
+  }
+  .hero h1 { font-size: clamp(38px, 7vw, 64px); line-height: 1.05; letter-spacing: -0.03em; margin: 0 0 16px; }
+  .hero .lede { font-size: clamp(17px, 2.6vw, 21px); color: var(--secondary); max-width: 620px; margin: 0 auto 28px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 600; color: var(--green);
+    background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.28);
+    padding: 6px 13px; border-radius: 980px; margin-bottom: 26px;
+  }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 980px; font-weight: 600; font-size: 15px;
+  }
+  .btn.fill { background: var(--green); color: #04140a; }
+  .btn.fill:hover { background: var(--mint); text-decoration: none; }
+  .btn.ghost { color: var(--label); border: 1px solid var(--line); background: rgba(255,255,255,0.03); }
+  .btn.ghost:hover { border-color: rgba(255,255,255,0.2); text-decoration: none; }
+
+  /* Sections */
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: clamp(24px, 4vw, 32px); letter-spacing: -0.02em; margin: 0 0 8px; }
+  section .sub { color: var(--secondary); margin: 0 0 36px; max-width: 640px; }
+
+  /* Steps */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
+  .step {
+    background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px;
+  }
+  .step .n {
+    width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+    background: rgba(48,209,88,0.14); color: var(--green); font-weight: 700; font-size: 14px; margin-bottom: 14px;
+  }
+  .step h3 { margin: 0 0 6px; font-size: 17px; }
+  .step p { margin: 0; color: var(--secondary); font-size: 14.5px; }
+
+  /* Feature grid */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .feature {
+    background: linear-gradient(180deg, var(--bg-card), var(--bg-elev));
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 22px;
+  }
+  .feature .ico { font-size: 22px; margin-bottom: 12px; }
+  .feature h3 { margin: 0 0 6px; font-size: 16.5px; }
+  .feature p { margin: 0; color: var(--secondary); font-size: 14.5px; }
+
+  /* Privacy highlight */
+  .privacy {
+    background:
+      radial-gradient(600px 300px at 0% 0%, rgba(48,209,88,0.10), transparent 60%),
+      var(--bg-elev);
+    border: 1px solid rgba(48,209,88,0.22); border-radius: var(--radius); padding: 30px;
+  }
+  .privacy ul { margin: 14px 0 0; padding-left: 0; list-style: none; }
+  .privacy li { position: relative; padding-left: 28px; margin-bottom: 12px; color: var(--secondary); }
+  .privacy li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--green); font-weight: 700; }
+  .privacy li strong { color: var(--label); font-weight: 600; }
+
+  /* FAQ */
+  details {
+    border: 1px solid var(--line); border-radius: 14px; padding: 4px 18px; margin-bottom: 12px;
+    background: var(--bg-card);
+  }
+  details[open] { border-color: rgba(48,209,88,0.25); }
+  summary { cursor: pointer; padding: 14px 0; font-weight: 600; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; float: right; color: var(--green); font-weight: 700; font-size: 20px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 0 0 16px; color: var(--secondary); }
+
+  footer {
+    border-top: 1px solid var(--line); padding: 36px 0 60px; color: var(--tertiary); font-size: 14px;
+    text-align: center;
+  }
+  footer a { color: var(--secondary); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <img src="branding/logo-512.png" alt="Tabs icon" />
+    <span class="name">Tabs</span>
+    <span class="spacer"></span>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a class="primary" href="https://github.com/sahilramani/Tabs">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero" style="border-top: none;">
+    <img class="logo" src="branding/logo-512.png" alt="Tabs app icon" />
+    <div class="pill">🔒 100% on-device — nothing is uploaded</div>
+    <h1>Keep tabs on your<br/>subscriptions.</h1>
+    <p class="lede">Tabs finds the recurring charges hiding in your bank statements — scanned, parsed, and stored entirely on your phone. No accounts, no servers, no tracking.</p>
+    <div class="cta-row">
+      <a class="btn fill" href="#how">See how it works</a>
+      <a class="btn ghost" href="https://github.com/sahilramani/Tabs">View source ↗</a>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2>How it works</h2>
+    <p class="sub">Four steps, all local. Tabs reads a statement, proposes what looks recurring, and lets you confirm before anything is saved.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Import</h3>
+        <p>Pick a screenshot, a PDF statement, or a whole folder of statements. Apple's Vision OCR and PDFKit pull the text out on-device.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Detect</h3>
+        <p>A heuristic parser groups charges by merchant, clusters them by amount, and surfaces the ones that actually behave like subscriptions.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Review</h3>
+        <p>You're in the loop. Edit the name, price, and billing cycle of each detected row — and see the exact statement lines behind it — before saving.</p>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <h3>Save &amp; remind</h3>
+        <p>Saved subscriptions land in a local store. Tabs schedules a reminder a few days before each renewal so a charge never surprises you.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>What you can do</h2>
+    <p class="sub">Built for the full lifecycle of a subscription — from spotting it to cancelling it.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="ico">📷</div>
+        <h3>Scan a screenshot</h3>
+        <p>Snap your bank app's transactions list and let on-device OCR find the subscriptions in it.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📄</div>
+        <h3>Import PDF statements</h3>
+        <p>One statement or a folder of them. More months means better recurrence detection and inferred billing cycles.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">✍️</div>
+        <h3>Add manually</h3>
+        <p>Some subscriptions never hit a statement you have. Add any of them by hand in seconds.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🔔</div>
+        <h3>Renewal reminders</h3>
+        <p>A local notification before each renewal — delivered by the OS, scheduled with no server involved.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">✕</div>
+        <h3>Cancel, don't lose</h3>
+        <p>Mark a subscription cancelled to drop it from your spend total while keeping its history. Restore it anytime.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📊</div>
+        <h3>See real spend</h3>
+        <p>Every cycle normalized to a monthly figure, so a $120/yr plan and a $10/mo plan compare on the same axis.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy">
+    <h2>Privacy isn't a setting — it's the architecture</h2>
+    <p class="sub">Tabs has no networking layer. That's not a promise to keep your data safe in transit; there is no transit.</p>
+    <div class="privacy">
+      <ul>
+        <li><strong>No uploads.</strong> Screenshots, PDFs, and parsed charges are processed on your device and never sent anywhere.</li>
+        <li><strong>No accounts.</strong> Nothing to sign up for, nothing to log in to.</li>
+        <li><strong>No iCloud sync.</strong> The local store is configured with CloudKit explicitly disabled.</li>
+        <li><strong>No analytics, no SDKs, no endpoints.</strong> The app contains no <code>URLSession</code> calls at all.</li>
+        <li><strong>Declared, not just claimed.</strong> A privacy manifest ships with the app stating zero tracking and zero collected data types.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>FAQ</h2>
+    <details open>
+      <summary>Does Tabs connect to my bank?</summary>
+      <p>No. There's no bank login, no aggregator, no Plaid. You hand Tabs a statement you already have (a screenshot or a PDF), and it reads it locally. Nothing about your accounts is transmitted.</p>
+    </details>
+    <details>
+      <summary>What statements work best?</summary>
+      <p>Text-based PDF statements from your bank or card issuer work best, especially several months at once — recurrence across months is the strongest signal. Image-only (scanned) PDFs won't have extractable text; use the screenshot path for those.</p>
+    </details>
+    <details>
+      <summary>Will it catch every subscription?</summary>
+      <p>It's tuned to favor precision over recall — it would rather miss an ambiguous charge than fill your list with groceries and one-off purchases. Anything it misses, you can add manually in a few taps.</p>
+    </details>
+    <details>
+      <summary>What happens when I cancel something?</summary>
+      <p>Marking a subscription cancelled keeps the record and its detected charges, drops it from your monthly spend, and stops its reminder. It's reversible — restore it and the reminder comes back. Delete removes it permanently.</p>
+    </details>
+    <details>
+      <summary>Which platforms does it run on?</summary>
+      <p>iPhone and iPad on iOS 17 and later, and on Mac via Mac Catalyst. The Liquid Glass styling lights up on iOS 26 and falls back to a material surface on earlier versions.</p>
+    </details>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Tabs — a privacy-first, on-device subscription tracker.<br/>
+    <a href="https://github.com/sahilramani/Tabs">github.com/sahilramani/Tabs</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
