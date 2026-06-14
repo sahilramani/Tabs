@@ -9,6 +9,10 @@ heuristics may still change between releases.
 
 ## [Unreleased]
 
+### Fixed
+- Changing the billing cycle in the scan review screen now recomputes the
+  renewal date, so a draft saved as yearly no longer keeps a monthly renewal.
+
 ## [0.1.0] - 2026-06-14
 
 First alpha.
