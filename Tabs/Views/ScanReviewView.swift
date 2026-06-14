@@ -276,8 +276,13 @@ private struct DraftRow: View {
 
                     Spacer(minLength: Theme.Space.s)
 
-                    // Cycle menu styled as an accent pill.
-                    Picker("Cycle", selection: $draft.billingCycle) {
+                    // Cycle menu styled as an accent pill. Changing it realigns
+                    // the renewal date in the setter, so a draft saved as Yearly
+                    // doesn't keep a monthly renewal.
+                    Picker("Cycle", selection: Binding(
+                        get: { draft.billingCycle },
+                        set: { draft.realignRenewal(to: $0) }
+                    )) {
                         ForEach(BillingCycle.allCases) { cycle in
                             Text(cycle.displayName).tag(cycle)
                         }
