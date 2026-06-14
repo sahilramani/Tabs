@@ -37,11 +37,29 @@ struct TabsApp: App {
         guard (try? context.fetchCount(FetchDescriptor<Subscription>())) == 0 else { return }
 
         let day: TimeInterval = 86_400
+
+        // A few months of detected charges so the detail screen shows the
+        // statement evidence behind a subscription (used for demos/screenshots).
+        func monthly(_ amount: Decimal, _ merchant: String, months: Int) -> [ChargeRecord] {
+            (1...months).map { i in
+                ChargeRecord(
+                    amount: amount,
+                    date: .now.addingTimeInterval(-day * 30 * Double(i)),
+                    rawLine: merchant,
+                    currencyCode: "USD"
+                )
+            }
+        }
+
         let samples = [
-            Subscription(name: "Netflix", price: 15.49, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 2), source: "bank statements", currencyCode: "USD"),
-            Subscription(name: "Spotify", price: 11.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 6), source: "bank statements", currencyCode: "USD"),
-            Subscription(name: "iCloud+", price: 2.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 13), source: "bank statements", currencyCode: "USD"),
-            Subscription(name: "Amazon Prime", price: 139, billingCycle: .yearly, renewalDate: .now.addingTimeInterval(day * 40), source: "bank statements", currencyCode: "USD"),
+            Subscription(name: "Netflix", price: 15.49, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 2), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(15.49, "03/02 NETFLIX.COM  $15.49", months: 3)),
+            Subscription(name: "Spotify", price: 11.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 6), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(11.99, "03/05 SPOTIFY USA  $11.99", months: 3)),
+            Subscription(name: "iCloud+", price: 2.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 13), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(2.99, "03/12 ICLOUD+ APPLE.COM/BILL  $2.99", months: 3)),
+            Subscription(name: "Amazon Prime", price: 139, billingCycle: .yearly, renewalDate: .now.addingTimeInterval(day * 40), source: "bank statements", currencyCode: "USD",
+                         charges: [ChargeRecord(amount: 139, date: .now.addingTimeInterval(-day * 325), rawLine: "03/15 AMAZON PRIME*T45830NQ3 AMZN.COM/BILL  $139.00", currencyCode: "USD")]),
             Subscription(name: "Adobe Creative Cloud", price: 59.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 20), source: "bank statements", currencyCode: "USD", cancelledAt: .now.addingTimeInterval(-day * 3)),
         ]
         samples.forEach { context.insert($0) }

@@ -164,6 +164,13 @@ struct ContentView: View {
             // cycle on launch and whenever the app becomes active again. Also
             // re-check reminder permission (the user may toggle it in Settings).
             .task {
+                #if DEBUG
+                // Present the review sheet with sample drafts for demos and
+                // App Store screenshots, without driving a real import.
+                if reviewItem == nil, CommandLine.arguments.contains("--seed-review") {
+                    reviewItem = DraftsBox(drafts: Self.demoReviewDrafts, source: "bank statements")
+                }
+                #endif
                 rollOverdueRenewals()
                 await refreshReminderPermission()
             }
@@ -623,6 +630,27 @@ struct ContentView: View {
         let drafts: [ScannedSubscriptionDraft]
         let source: String
     }
+
+    #if DEBUG
+    /// Sample drafts mirroring the `samples/sample-statement.pdf` detections,
+    /// used by the `--seed-review` launch argument for screenshots.
+    private static var demoReviewDrafts: [ScannedSubscriptionDraft] {
+        func tx(_ amount: Decimal, _ rawLine: String, _ daysAgo: Double) -> ScannedTransaction {
+            ScannedTransaction(amount: amount, date: .now.addingTimeInterval(-86_400 * daysAgo), rawLine: rawLine, currencyCode: "USD")
+        }
+        return [
+            ScannedSubscriptionDraft(name: "Netflix", price: 15.49, currencyCode: "USD", transactions: [tx(15.49, "03/02 NETFLIX.COM  $15.49", 12)]),
+            ScannedSubscriptionDraft(name: "Spotify", price: 11.99, currencyCode: "USD", transactions: [tx(11.99, "03/05 SPOTIFY USA  $11.99", 9)]),
+            ScannedSubscriptionDraft(name: "Hulu", price: 17.99, currencyCode: "USD", transactions: [tx(17.99, "03/08 HULU 877-8244808  $17.99", 6)]),
+            ScannedSubscriptionDraft(name: "iCloud+", price: 2.99, currencyCode: "USD", transactions: [tx(2.99, "03/12 ICLOUD+ APPLE.COM/BILL  $2.99", 2)]),
+            ScannedSubscriptionDraft(name: "Adobe Creative Cloud", price: 54.99, currencyCode: "USD", transactions: [tx(54.99, "03/14 ADOBE CREATIVE CLOUD  $54.99", 30)]),
+            ScannedSubscriptionDraft(name: "Amazon Prime", price: 139, billingCycle: .yearly, currencyCode: "USD", transactions: [tx(139, "03/15 AMAZON PRIME  $139.00", 1)]),
+            ScannedSubscriptionDraft(name: "YouTube Premium", price: 13.99, currencyCode: "USD", transactions: [tx(13.99, "03/22 YOUTUBEPREMIUM  $13.99", 20)]),
+            ScannedSubscriptionDraft(name: "Disney+", price: 13.99, currencyCode: "USD", transactions: [tx(13.99, "03/25 DISNEY PLUS  $13.99", 16)]),
+            ScannedSubscriptionDraft(name: "Comcast Xfinity", price: 79.00, currencyCode: "USD", transactions: [tx(79.00, "03/27 COMCAST XFINITY  $79.00", 18)]),
+        ]
+    }
+    #endif
 }
 
 /// A summary card showing combined monthly spend across all subscriptions.
