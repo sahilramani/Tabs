@@ -552,6 +552,36 @@ final class RecurringChargeDetectorTests: XCTestCase {
         XCTAssertFalse(subscription.isActive)
     }
 
+    // MARK: - ScannedSubscriptionDraft.realignRenewal — cycle change in review
+
+    func testDraftRealignRenewalAnchorsOnLatestTransaction() {
+        let calendar = Calendar.current
+        let now = date(2026, 6, 14)
+        // Amazon Prime detected as monthly (single charge) then switched to
+        // yearly in review — the renewal must follow the new cadence.
+        var draft = ScannedSubscriptionDraft(
+            name: "Amazon Prime", price: Decimal(string: "151.68")!, billingCycle: .monthly,
+            transactions: [ScannedTransaction(amount: 151.68, date: date(2026, 3, 15), rawLine: "AMAZON PRIME 151.68")]
+        )
+
+        draft.realignRenewal(to: .yearly, now: now, calendar: calendar)
+
+        XCTAssertEqual(draft.billingCycle, .yearly)
+        // Mar 15, 2026 + 1yr → Mar 15, 2027 (first on/after now), not a monthly date.
+        XCTAssertTrue(calendar.isDate(draft.renewalDate, inSameDayAs: date(2027, 3, 15)))
+    }
+
+    func testDraftRealignRenewalFallsBackToNowWhenUndated() {
+        let calendar = Calendar.current
+        let now = date(2026, 6, 14)
+        var draft = ScannedSubscriptionDraft(name: "Adobe", price: 59.99, billingCycle: .monthly)
+
+        draft.realignRenewal(to: .yearly, now: now, calendar: calendar)
+
+        // No dated charges → anchor on now → Jun 14, 2027.
+        XCTAssertTrue(calendar.isDate(draft.renewalDate, inSameDayAs: date(2027, 6, 14)))
+    }
+
     // MARK: - ScanReviewView.plan — insert vs update on save
 
     func testPlanTreatsDraftAsNewWhenOnlyMatchIsTrashed() {

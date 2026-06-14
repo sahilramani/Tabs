@@ -93,6 +93,16 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
         self.transactions = transactions
     }
 
+    /// Switches to `cycle` and recomputes `renewalDate` to match: one cycle
+    /// after the most recent detected charge (or detection time when undated),
+    /// rolled forward to today or later. Mirrors the detector's import-time rule
+    /// so changing the cycle during review keeps the renewal consistent.
+    mutating func realignRenewal(to cycle: BillingCycle, now: Date = Date(), calendar: Calendar = .current) {
+        billingCycle = cycle
+        let anchor = transactions.compactMap(\.date).max() ?? now
+        renewalDate = RecurringChargeDetector.nextRenewal(after: anchor, cycle: cycle, now: now, calendar: calendar)
+    }
+
     /// Currency-formatted average price for display, in its detected currency.
     var formattedPrice: String { CurrencyFormat.string(from: price, code: currencyCode) }
 
