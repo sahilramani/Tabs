@@ -1,0 +1,68 @@
+<!doctype html>
+<!--
+  Synthetic bank statement for demoing Tabs's PDF import. All names, numbers,
+  and amounts are fictional. Rendered to a text-selectable PDF by
+  generate-statement.sh so PDFKit can extract the transaction lines.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: letter; margin: 0.75in; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 12px; }
+  .head { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 10px; }
+  .bank { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+  .muted { color: #555; }
+  h2 { font-size: 13px; margin: 22px 0 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  pre { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12px; line-height: 1.6; white-space: pre; }
+  .summary td { padding: 2px 18px 2px 0; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="bank">Summit Federal Bank</div>
+      <div class="muted">Cardholder Statement</div>
+    </div>
+    <div class="muted" style="text-align:right">
+      Account ending 4821<br>
+      Statement period: Mar 1 – Mar 31, 2026<br>
+      Page 1 of 1
+    </div>
+  </div>
+
+  <h2>Account Summary</h2>
+  <table class="summary">
+    <tr><td>Previous Balance</td><td>$1,204.55</td></tr>
+    <tr><td>Payments &amp; Credits</td><td>-$1,204.55</td></tr>
+    <tr><td>New Charges</td><td>$639.42</td></tr>
+    <tr><td>New Balance</td><td>$639.42</td></tr>
+  </table>
+
+  <h2>Transactions</h2>
+<pre>
+Date   Description                                Amount
+03/02  NETFLIX.COM                                $15.49
+03/03  WHOLEFDS MKT #10293 AUSTIN TX              $84.12
+03/05  SPOTIFY USA  NEW YORK NY                   $11.99
+03/06  SHELL OIL 57311 HOUSTON TX                 $52.30
+03/08  HULU 877-8244808 CA                        $17.99
+03/11  AMAZON MKTPLACE PMTS AMZN.COM/BILL WA      $36.41
+03/12  ICLOUD+ APPLE.COM/BILL CUPERTINO CA        $2.99
+03/14  ADOBE CREATIVE CLOUD 408-536 CA            $54.99
+03/15  AMAZON PRIME*T45830NQ3 AMZN.COM/BILL WA    $151.68
+03/18  TRADER JOES #455 PORTLAND OR               $63.77
+03/20  STARBUCKS STORE 04713 SEATTLE WA           $6.45
+03/22  YOUTUBEPREMIUM GOOGLE  G.CO/HELPPAY        $13.99
+03/25  DISNEY PLUS 888-905 CA                     $13.99
+03/27  COMCAST XFINITY 800-COMCAST               $79.00
+03/29  UBER EATS  8005928996 CA                   $28.40
+03/30  PLANET FITNESS CLUB DUES                   $24.99
+</pre>
+
+  <p class="muted" style="margin-top:28px; font-size:11px">
+    This is a sample statement generated for software testing. It does not
+    represent a real account or any real person's financial data.
+  </p>
+</body>
+</html>
