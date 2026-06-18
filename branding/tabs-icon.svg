@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="bg" cx="0.38" cy="0.30" r="0.95">
+      <stop offset="0" stop-color="#17291F"></stop>
+      <stop offset="1" stop-color="#050806"></stop>
+    </radialGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D9FFE4"></stop>
+      <stop offset="0.32" stop-color="#30D158"></stop>
+      <stop offset="1" stop-color="#1FA64C"></stop>
+    </linearGradient>
+    <linearGradient id="mintPage" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EBF9F0"></stop>
+      <stop offset="1" stop-color="#CDE6D5"></stop>
+    </linearGradient>
+    <linearGradient id="charcoal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#27292B"></stop>
+      <stop offset="1" stop-color="#0F1011"></stop>
+    </linearGradient>
+    <linearGradient id="darkTab" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16251B"></stop>
+      <stop offset="1" stop-color="#0A130E"></stop>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#30D158" stop-opacity="0.5"></stop>
+      <stop offset="0.55" stop-color="#30D158" stop-opacity="0.16"></stop>
+      <stop offset="1" stop-color="#30D158" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"></rect>
+
+  <rect x="690" y="252" width="220" height="160" rx="38" fill="url(#darkTab)" stroke="rgba(0,0,0,0.20)" stroke-width="3"></rect>
+  <rect x="470" y="244" width="250" height="168" rx="40" fill="url(#charcoal)" stroke="rgba(0,0,0,0.18)" stroke-width="3"></rect>
+
+  <rect x="152" y="360" width="720" height="528" rx="52" fill="url(#mintPage)" stroke="rgba(0,0,0,0.08)" stroke-width="3"></rect>
+
+  <circle cx="300" cy="430" r="300" fill="url(#glow)"></circle>
+
+  <rect x="152" y="232" width="312" height="184" rx="42" fill="url(#green)" stroke="rgba(217,255,228,0.5)" stroke-width="3"></rect>
+
+  <rect x="224" y="486" width="430" height="40" rx="20" fill="rgba(18,40,26,0.13)"></rect>
+  <rect x="224" y="576" width="300" height="40" rx="20" fill="rgba(18,40,26,0.08)"></rect>
+</svg>

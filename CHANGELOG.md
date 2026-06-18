@@ -9,6 +9,10 @@ heuristics may still change between releases.
 
 ## [Unreleased]
 
+### Changed
+- New app icon — a browser-tab-bar mark with the active tab in Vital Green,
+  rendered from `branding/tabs-icon.svg` via `scripts/make-icon.sh`.
+
 ### Fixed
 - Changing the billing cycle in the scan review screen now recomputes the
   renewal date, so a draft saved as yearly no longer keeps a monthly renewal.
