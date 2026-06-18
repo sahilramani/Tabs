@@ -13,6 +13,8 @@ heuristics may still change between releases.
 - New app icon — a browser-tab-bar mark with the active tab in Vital Green,
   rendered from `branding/tabs-icon.svg` via `scripts/make-icon.sh`. The README
   logo is regenerated from the same source to match.
+- Redesigned the GitHub Pages landing (`docs/index.html`) — dark on-brand
+  marketing page with hero, how-it-works, features, privacy, and FAQ.
 
 ### Fixed
 - Changing the billing cycle in the scan review screen now recomputes the
