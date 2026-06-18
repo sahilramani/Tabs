@@ -27,3 +27,8 @@ if sips -g hasAlpha "$OUT" | grep -q "hasAlpha: yes"; then
 fi
 
 echo "Wrote $OUT (1024x1024, opaque)"
+
+# Keep the README/branding logo in sync from the same source.
+LOGO="$DIR/docs/branding/logo-512.png"
+rsvg-convert -w 512 -h 512 "$SVG" -o "$LOGO"
+echo "Wrote $LOGO (512x512)"
