@@ -1,0 +1,59 @@
+<!doctype html>
+<!--
+  Social / OG preview card (1280x640) for the Tabs site. Rendered to
+  docs/branding/social-1280x640.png by scripts/make-social-card.sh. Mirrors the
+  landing page's dark-green theme and uses the tab-bar app mark.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #F3F6F4;
+    background:
+      radial-gradient(900px 560px at 14% -16%, rgba(48,209,88,0.18), transparent 60%),
+      radial-gradient(760px 520px at 104% 6%, rgba(31,166,76,0.13), transparent 56%),
+      #070A08;
+    position: relative;
+  }
+  .dots {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(900px 700px at 30% 0%, #000 0%, transparent 75%);
+  }
+  .wrap { position: relative; height: 100%; padding: 88px 96px; display: flex; flex-direction: column; justify-content: center; }
+  .row { display: flex; align-items: center; gap: 40px; }
+  .icon { width: 168px; height: 168px; border-radius: 38px; box-shadow: 0 24px 60px rgba(48,209,88,0.28), 0 0 0 1px rgba(255,255,255,0.08); display: block; flex: none; }
+  .wordmark { font-size: 92px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .tagline { margin-top: 26px; font-size: 46px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; max-width: 880px; }
+  .grad { background: linear-gradient(180deg, #D9FFE4, #30D158 62%, #1FA64C); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 12px; margin-top: 34px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 20px; font-weight: 600; letter-spacing: 0.04em;
+    color: #30D158; background: rgba(48,209,88,0.10); border: 1px solid rgba(48,209,88,0.28);
+    padding: 12px 22px; border-radius: 980px; width: fit-content;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: #30D158; box-shadow: 0 0 12px rgba(48,209,88,0.9); }
+  .foot { position: absolute; left: 96px; bottom: 64px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 21px; color: #69766E; }
+</style>
+</head>
+<body>
+  <div class="dots"></div>
+  <div class="wrap">
+    <div class="row">
+      <img class="icon" src="tabs-icon.svg" alt="Tabs">
+      <div class="wordmark">Tabs</div>
+    </div>
+    <div class="tagline">Keep tabs on your <span class="grad">subscriptions.</span></div>
+    <div class="pill"><span class="dot"></span>100% ON-DEVICE · NEVER UPLOADED</div>
+  </div>
+  <div class="foot">github.com/sahilramani/Tabs</div>
+</body>
+</html>
