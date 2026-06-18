@@ -11,7 +11,8 @@ heuristics may still change between releases.
 
 ### Changed
 - New app icon — a browser-tab-bar mark with the active tab in Vital Green,
-  rendered from `branding/tabs-icon.svg` via `scripts/make-icon.sh`.
+  rendered from `branding/tabs-icon.svg` via `scripts/make-icon.sh`. The README
+  logo is regenerated from the same source to match.
 
 ### Fixed
 - Changing the billing cycle in the scan review screen now recomputes the
