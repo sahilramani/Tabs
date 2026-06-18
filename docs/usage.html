@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Usage — Tabs</title>
+<meta name="description" content="Every Tabs feature, end to end: the home spend summary, importing statements, reviewing detections, managing and cancelling subscriptions, and reminders." />
+<meta property="og:title" content="Usage — Tabs" />
+<meta property="og:description" content="Every Tabs feature, end to end: the home spend summary, importing statements, reviewing detections, managing and cancelling subscriptions, and reminders." />
+<meta property="og:image" content="branding/social-1280x640.png" />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/png" href="branding/logo-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #070A08; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { text-decoration: none; }
+    .usage-row { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: center; }
+    .usage-row.flip .shot { order: 2; }
+    @media (max-width: 760px) {
+      .usage-row { grid-template-columns: 1fr; gap: 26px; justify-items: center; }
+      .usage-row.flip .shot { order: 0; }
+      .usage-row .copy { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F3F6F4; background:
+      radial-gradient(1100px 700px at 12% -14%, rgba(48,209,88,0.14), transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, rgba(31,166,76,0.10), transparent 56%),
+      #070A08;
+  background-attachment: fixed; min-height: 100vh; line-height: 1.6; position: relative; overflow-x: hidden;">
+
+  <div aria-hidden="true" style="position: fixed; inset: 0; pointer-events: none; opacity: 0.5; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 28px 28px; mask-image: radial-gradient(1000px 1000px at 50% 0%, #000 0%, transparent 75%); -webkit-mask-image: radial-gradient(1000px 1000px at 50% 0%, #000 0%, transparent 75%);"></div>
+
+  <!-- ============ NAV ============ -->
+  <header style="position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); background: rgba(7,10,8,0.72); border-bottom: 1px solid rgba(255,255,255,0.07);">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 14px;">
+      <a href="index.html" style="display: flex; align-items: center; gap: 11px;">
+        <img src="branding/logo-512.png" alt="Tabs" width="30" height="30" style="border-radius: 8px; box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 4px 14px rgba(48,209,88,0.25); display: block;">
+        <span style="font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #F3F6F4;">Tabs</span>
+      </a>
+      <div style="flex: 1;"></div>
+      <nav style="display: flex; align-items: center; gap: 4px;">
+        <a href="index.html" style="color: #9AA8A0; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 9px;" style-hover="color: #F3F6F4; background: rgba(255,255,255,0.05);">Overview</a>
+        <a href="getting-started.html" style="color: #9AA8A0; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 9px;" style-hover="color: #F3F6F4; background: rgba(255,255,255,0.05);">Getting started</a>
+        <a href="usage.html" style="color: #F3F6F4; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 9px;">Usage</a>
+        <a href="contact.html" style="color: #9AA8A0; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 9px;" style-hover="color: #F3F6F4; background: rgba(255,255,255,0.05);">Contact</a>
+        <a href="https://github.com/sahilramani/Tabs" style="margin-left: 8px; display: inline-flex; align-items: center; gap: 7px; background: #30D158; color: #04140A; font-size: 13.5px; font-weight: 700; padding: 8px 15px; border-radius: 980px;" style-hover="background: #D9FFE4;">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="#04140A" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1080px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1;">
+
+    <!-- ============ PAGE HEAD ============ -->
+    <section style="padding: 72px 0 48px; max-width: 720px;">
+      <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; color: #30D158; text-transform: uppercase; margin-bottom: 16px;">// Usage</div>
+      <h1 style="margin: 0 0 16px; font-size: clamp(36px, 6vw, 56px); line-height: 1.04; letter-spacing: -0.03em; font-weight: 800;">Every feature, end to end.</h1>
+      <p style="font-size: clamp(17px, 2.2vw, 20px); color: #9AA8A0; margin: 0; text-wrap: pretty;">From the home screen to cancelling a subscription you forgot about — here's how Tabs works once it's in your hands.</p>
+    </section>
+
+    <!-- ============ ROW 1: HOME ============ -->
+    <section style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.07);">
+      <div class="usage-row">
+        <div class="shot" style="justify-self: center;">
+          <!-- SCREENSHOT SLOT: replace inner div with <img src="screenshots/home.png"> -->
+          <div style="width: 280px; height: 580px; border-radius: 40px; padding: 10px; background: linear-gradient(160deg, #1a2820, #0a0f0c); box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.5);">
+            <img src="screenshots/home.png" alt="Tabs home — monthly spend summary and active subscriptions" style="width: 100%; height: 100%; border-radius: 31px; object-fit: cover; display: block;">
+          </div>
+        </div>
+        <div class="copy">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #69766E; margin-bottom: 12px;">01 — HOME</div>
+          <h2 style="margin: 0 0 12px; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: -0.02em; font-weight: 800;">One number that tells the truth</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 15.5px; line-height: 1.65; max-width: 480px;">The home screen leads with your total monthly spend, with every billing cycle normalized to a monthly figure — a $120/yr plan and a $10/mo plan sit on the same axis. Below it, active subscriptions are sorted by how soon they renew, and cancelled ones are tucked into their own section.</p>
+          <ul style="margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+            <li style="display: flex; gap: 10px; color: #9AA8A0; font-size: 14.5px;"><span style="color: #30D158; font-weight: 700;">›</span> Renewal-proximity colors flag what's due soon</li>
+            <li style="display: flex; gap: 10px; color: #9AA8A0; font-size: 14.5px;"><span style="color: #30D158; font-weight: 700;">›</span> Deterministic monogram avatars — no bundled logos</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ROW 2: IMPORT ============ -->
+    <section style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.07);">
+      <div class="usage-row flip">
+        <div class="shot" style="justify-self: center;">
+          <div style="width: 280px; height: 580px; border-radius: 40px; padding: 10px; background: linear-gradient(160deg, #1a2820, #0a0f0c); box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.5);">
+            <div style="width: 100%; height: 100%; border-radius: 31px; overflow: hidden; background-color: #0d130f; background-image: repeating-linear-gradient(135deg, rgba(48,209,88,0.06) 0 12px, transparent 12px 24px); display: grid; place-items: center; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="text-align: center; padding: 20px;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #5a6b60; line-height: 1.7; letter-spacing: 0.02em;">SCREENSHOT<br><span style="color: #30D158;">import.png</span><br>Import sheet —<br>scan / PDF / folder</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copy">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #69766E; margin-bottom: 12px;">02 — IMPORT</div>
+          <h2 style="margin: 0 0 12px; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: -0.02em; font-weight: 800;">Two ways in, both on-device</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 15.5px; line-height: 1.65; max-width: 480px;">Tap the <strong style="color: #F3F6F4;">+</strong> and pick how to feed Tabs a statement. Everything is read locally — Vision and PDFKit never touch the network.</p>
+          <div style="display: flex; flex-direction: column; gap: 12px; max-width: 480px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px 18px;"><div style="font-size: 14.5px; font-weight: 600; margin-bottom: 3px;">📷 Scan a screenshot</div><p style="margin: 0; color: #9AA8A0; font-size: 13.5px; line-height: 1.55;">Apple's Vision framework OCRs your bank app's transaction list right on your phone.</p></div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px 18px;"><div style="font-size: 14.5px; font-weight: 600; margin-bottom: 3px;">📄 Import a PDF (or a folder)</div><p style="margin: 0; color: #9AA8A0; font-size: 13.5px; line-height: 1.55;">PDFKit extracts text from statements. Several months at once means stronger recurrence detection.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ROW 3: REVIEW ============ -->
+    <section style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.07);">
+      <div class="usage-row">
+        <div class="shot" style="justify-self: center;">
+          <div style="width: 280px; height: 580px; border-radius: 40px; padding: 10px; background: linear-gradient(160deg, #1a2820, #0a0f0c); box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.5);">
+            <img src="screenshots/review.png" alt="Tabs review findings — detected subscriptions with edit controls and duplicate flags" style="width: 100%; height: 100%; border-radius: 31px; object-fit: cover; display: block;">
+          </div>
+        </div>
+        <div class="copy">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #69766E; margin-bottom: 12px;">03 — REVIEW</div>
+          <h2 style="margin: 0 0 12px; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: -0.02em; font-weight: 800;">Nothing is saved without you</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 15.5px; line-height: 1.65; max-width: 480px;">Detection is a proposal, not a decision. Tabs shows each candidate with its detected name, price, and billing cycle — all editable — plus the exact statement lines it matched, so you can see <em style="color: #cdd8d0;">why</em> something was flagged. Duplicates of subscriptions you already track are called out. Deselect anything that isn't a subscription, then save the rest.</p>
+          <div style="display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #9FE8B4; background: rgba(48,209,88,0.08); border: 1px solid rgba(48,209,88,0.2); border-radius: 10px; padding: 8px 13px;">Tuned for precision over recall — fewer false positives</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ROW 4: MANAGE ============ -->
+    <section style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.07);">
+      <div class="usage-row flip">
+        <div class="shot" style="justify-self: center;">
+          <div style="width: 280px; height: 580px; border-radius: 40px; padding: 10px; background: linear-gradient(160deg, #1a2820, #0a0f0c); box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.5);">
+            <img src="screenshots/detail.png" alt="Tabs subscription detail — price, billing cycle, detected charges, and cancel or trash actions" style="width: 100%; height: 100%; border-radius: 31px; object-fit: cover; display: block;">
+          </div>
+        </div>
+        <div class="copy">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #69766E; margin-bottom: 12px;">04 — MANAGE</div>
+          <h2 style="margin: 0 0 12px; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: -0.02em; font-weight: 800;">Cancel without losing the record</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 15.5px; line-height: 1.65; max-width: 480px;">Open any subscription to adjust its price, cycle, or next renewal date. When you're done with one, you have two distinct choices:</p>
+          <div style="display: flex; flex-direction: column; gap: 12px; max-width: 480px;">
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 15px 17px;"><span style="flex: none; color: #E5B430; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 13px;">CANCEL</span><p style="margin: 0; color: #9AA8A0; font-size: 13.5px; line-height: 1.55;">Keeps the history, drops it from your spend total, stops the reminder. Fully reversible — restore it anytime and the reminder comes back.</p></div>
+            <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 15px 17px;"><span style="flex: none; color: #E5564E; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 13px;">DELETE</span><p style="margin: 0; color: #9AA8A0; font-size: 13.5px; line-height: 1.55;">Removes the subscription and its detected charges permanently.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ROW 5: REMINDERS + MANUAL (split cards) ============ -->
+    <section style="padding: 48px 0 8px; border-top: 1px solid rgba(255,255,255,0.07);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.22); display: grid; place-items: center; margin-bottom: 16px;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #69766E; margin-bottom: 8px;">05 — REMINDERS</div>
+          <h3 style="margin: 0 0 8px; font-size: 19px; font-weight: 700;">Never surprised by a charge</h3>
+          <p style="margin: 0; color: #9AA8A0; font-size: 14.5px; line-height: 1.6;">Each saved subscription schedules a local notification a few days before it renews — delivered by the OS, with no server involved. Cancel a subscription and its reminder stops; restore it and the reminder returns.</p>
+        </div>
+        <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.22); display: grid; place-items: center; margin-bottom: 16px;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #69766E; margin-bottom: 8px;">06 — MANUAL ENTRY</div>
+          <h3 style="margin: 0 0 8px; font-size: 19px; font-weight: 700;">Add anything by hand</h3>
+          <p style="margin: 0; color: #9AA8A0; font-size: 14.5px; line-height: 1.6;">Some subscriptions never show up on a statement you have — a plan billed to another card, or one you just signed up for. Add it manually with a name, price, and cycle in a few seconds.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section style="padding: 56px 0;">
+      <div style="padding: 32px; background: radial-gradient(600px 300px at 100% 0%, rgba(48,209,88,0.12), transparent 60%), linear-gradient(135deg, rgba(48,209,88,0.08), rgba(31,166,76,0.03)); border: 1px solid rgba(48,209,88,0.24); border-radius: 22px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between;">
+        <div><h3 style="margin: 0 0 5px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">Want to try it now?</h3><p style="margin: 0; color: #9AA8A0; font-size: 15px;">Build Tabs from source — it takes about five minutes.</p></div>
+        <a href="getting-started.html" style="display: inline-flex; align-items: center; gap: 8px; background: #30D158; color: #04140A; font-size: 15px; font-weight: 700; padding: 13px 24px; border-radius: 980px; white-space: nowrap;" style-hover="background: #D9FFE4;">Getting started →</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="border-top: 1px solid rgba(255,255,255,0.07); margin-top: 24px; position: relative; z-index: 1;">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 44px 28px 56px; display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;">
+      <div style="max-width: 320px;">
+        <div style="display: flex; align-items: center; gap: 11px; margin-bottom: 12px;">
+          <img src="branding/logo-512.png" alt="Tabs" width="28" height="28" style="border-radius: 7px;">
+          <span style="font-weight: 700; font-size: 16px; letter-spacing: -0.02em;">Tabs</span>
+        </div>
+        <p style="margin: 0; color: #69766E; font-size: 13.5px; line-height: 1.6;">A privacy-first, on-device subscription tracker for iOS. Your financial data never leaves your phone.</p>
+      </div>
+      <div style="display: flex; gap: 56px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #69766E; text-transform: uppercase; margin-bottom: 2px;">Pages</div>
+          <a href="index.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Overview</a>
+          <a href="getting-started.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Getting started</a>
+          <a href="usage.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Usage</a>
+          <a href="contact.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Contact</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #69766E; text-transform: uppercase; margin-bottom: 2px;">Project</div>
+          <a href="https://github.com/sahilramani/Tabs" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Source on GitHub</a>
+          <a href="https://github.com/sahilramani/Tabs/issues" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Issues</a>
+          <a href="https://github.com/sahilramani/Tabs/blob/main/CONTRIBUTING.md" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Contributing</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width: 1080px; margin: 0 auto; padding: 0 28px 40px;">
+      <p style="margin: 0; color: #4f5a53; font-size: 12.5px; font-family: 'JetBrains Mono', ui-monospace, monospace;">© 2026 Tabs · Open source · github.com/sahilramani/Tabs</p>
+    </div>
+  </footer>
+
+</div>
+<script>
+(function(){
+  function bind(attr){
+    document.querySelectorAll('['+attr+']').forEach(function(el){
+      var hov = el.getAttribute(attr);
+      el.addEventListener('mouseenter', function(){ var b = el.getAttribute('style')||''; el.dataset._b = b; el.setAttribute('style', b + ';' + hov); });
+      el.addEventListener('mouseleave', function(){ if(el.dataset._b !== undefined){ el.setAttribute('style', el.dataset._b); } });
+    });
+  }
+  bind('style-hover');
+})();
+</script>
+</body>
+</html>
