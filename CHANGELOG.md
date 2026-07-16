@@ -9,7 +9,31 @@ heuristics may still change between releases.
 
 ## [Unreleased]
 
+### Added
+- Per-subscription reminder lead time — each subscription now has its own
+  "Reminder" setting (on renewal day up to 7 days before) on the detail screen.
+- The detector now surfaces merchants that recur on a regular cadence but with
+  varying amounts (gas stations, utilities) as deselected review candidates
+  badged "Amounts vary — looks one-off", instead of hiding them.
+- Import sheet: the floating add button opens a single sheet with all four
+  paths — scan a screenshot, import a PDF statement, import a folder, or add
+  manually.
+
 ### Changed
+- Redesigned all four core screens per the app-screens design handoff:
+  - **Home** — plain left-aligned monthly-spend header with dimmed cents,
+    Active/Cancelled sections, renewal subtitles that turn green inside the
+    3-day window, a gear button for About, and a floating Liquid Glass add
+    button (replaces the bottom import bar).
+  - **Review** — one card per candidate with a selection circle, editable name
+    and price, cycle/renewal/charge-count chips, an expandable
+    statement-evidence box, an "Already tracked — will update" badge (duplicates
+    now stay selected and update in place), and a pinned "Save N subscriptions"
+    capsule. The caption reports candidates, statements, and the month window.
+  - **Detail** — centered monogram header with a status capsule, tappable
+    Price/Billing cycle/Next renewal/Reminder rows, First detected + Matched
+    charges provenance card, and centered Cancel/Restore and Delete rows
+    (Delete confirms, then moves to the Trash).
 - New app icon — a browser-tab-bar mark with the active tab in Vital Green,
   rendered from `branding/tabs-icon.svg` via `scripts/make-icon.sh`. The README
   logo is regenerated from the same source to match.
