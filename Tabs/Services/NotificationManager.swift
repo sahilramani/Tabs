@@ -23,8 +23,18 @@ final class NotificationManager {
     static let shared = NotificationManager()
     private init() {}
 
-    /// How many days before the renewal date to fire the reminder.
-    var leadTimeDays: Int = 3
+    /// The moment a reminder should fire: `daysBefore` days ahead of the
+    /// renewal, clamped so it never lands in the past. Pure, `nonisolated`
+    /// (no notification-center state), and unit-tested.
+    nonisolated static func fireDate(
+        for renewalDate: Date,
+        daysBefore: Int,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> Date {
+        let target = calendar.date(byAdding: .day, value: -daysBefore, to: renewalDate) ?? renewalDate
+        return max(target, now.addingTimeInterval(5))
+    }
 
     /// Requests notification permission. Safe to call repeatedly.
     @discardableResult
@@ -62,11 +72,10 @@ final class NotificationManager {
         content.body = "\(subscription.name) renews soon (\(subscription.formattedPrice)). Cancel it now if you don't need it."
         content.sound = .default
 
-        // Fire `leadTimeDays` before renewal — but never in the past.
-        let fireDate = Calendar.current.date(
-            byAdding: .day, value: -leadTimeDays, to: subscription.renewalDate
-        ) ?? subscription.renewalDate
-        let triggerDate = max(fireDate, Date().addingTimeInterval(5))
+        // Fire the subscription's own lead time before renewal — never in the past.
+        let triggerDate = Self.fireDate(
+            for: subscription.renewalDate, daysBefore: subscription.reminderDaysBefore
+        )
 
         let components = Calendar.current.dateComponents(
             [.year, .month, .day, .hour, .minute], from: triggerDate
