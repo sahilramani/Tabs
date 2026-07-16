@@ -51,6 +51,13 @@ struct ContentView: View {
     // a stable identity (avoids re-presentation loops from recomputed IDs).
     @State private var reviewItem: DraftsBox?
 
+    #if DEBUG
+    /// `--seed-review` fires once per launch. `.task` re-runs whenever this
+    /// view reappears (e.g. popping back from a detail push), which would
+    /// otherwise re-present the demo sheet forever.
+    @State private var hasSeededReview = false
+    #endif
+
     // Error alert state.
     @State private var errorMessage: String?
 
@@ -177,7 +184,8 @@ struct ContentView: View {
                 #if DEBUG
                 // Present the review sheet with sample drafts for demos and
                 // App Store screenshots, without driving a real import.
-                if reviewItem == nil, CommandLine.arguments.contains("--seed-review") {
+                if !hasSeededReview, reviewItem == nil, CommandLine.arguments.contains("--seed-review") {
+                    hasSeededReview = true
                     reviewItem = DraftsBox(
                         drafts: Self.demoReviewDrafts, source: "bank statements",
                         statementCount: 3, sourceNoun: "statement"
@@ -302,14 +310,16 @@ struct ContentView: View {
         } else {
             List {
                 Section {
+                    // A hair of leading inset keeps the first glyph clear of
+                    // the row's clipping edge (0 shaved the "M" off MONTHLY).
                     spendHeader
-                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 16, trailing: 0))
+                        .listRowInsets(EdgeInsets(top: 8, leading: 4, bottom: 16, trailing: 4))
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
 
                     if remindersDisabled {
                         reminderBanner
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0))
+                            .listRowInsets(EdgeInsets(top: 0, leading: 4, bottom: 12, trailing: 4))
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
                     }

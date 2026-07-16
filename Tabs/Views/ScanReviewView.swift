@@ -369,11 +369,6 @@ private struct CandidateCard: View {
                 }
                 .buttonStyle(.plain)
 
-                ReviewChip(
-                    text: "Next \(draft.renewalDate.formatted(.dateTime.month(.abbreviated).day()))",
-                    style: .gray
-                )
-
                 if !draft.transactions.isEmpty {
                     Button(action: onToggleEvidence) {
                         ReviewChip(
@@ -383,6 +378,16 @@ private struct CandidateCard: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("View detected charges")
+                }
+
+                // The renewal date is the least load-bearing chip; when a
+                // state badge is taking up the row, drop it rather than
+                // pushing the informative chips off the card edge.
+                if !draft.isAlreadyTracked && !draft.amountsVary {
+                    ReviewChip(
+                        text: "Next \(draft.renewalDate.formatted(.dateTime.month(.abbreviated).day()))",
+                        style: .gray
+                    )
                 }
             }
         }

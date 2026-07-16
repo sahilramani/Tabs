@@ -21,19 +21,44 @@ enum BrandStyle {
         Color(hex: 0x69BFD6)
     ]
 
-    /// A stable color derived from the brand name. The same name always yields
-    /// the same hue, so Netflix is always the same color.
+    /// Recognizable hues for well-known brands (per the design handoff:
+    /// "Netflix red, Spotify green, iCloud+ blue…"). Keys are prefixes of the
+    /// normalized merchant key; anything unlisted falls back to the stable
+    /// hashed palette. Still no logos — just a familiar color.
+    private static let knownHues: [(keyPrefix: String, color: Color)] = [
+        ("netflix",  Color(hex: 0xDB4E45)),
+        ("spotify",  Color(hex: 0x1DB954)),
+        ("icloud",   Color(hex: 0x5AA2E0)),
+        ("apple",    Color(hex: 0x9BA1A8)),
+        ("disney",   Color(hex: 0x6E79D6)),
+        ("notion",   Color(hex: 0xE0A05A)),
+        ("hulu",     Color(hex: 0x9AA0A6)),
+        ("adobe",    Color(hex: 0xE0564B)),
+        ("amazon",   Color(hex: 0xE8A33D)),
+        ("youtube",  Color(hex: 0xE05252)),
+        ("dropbox",  Color(hex: 0x4C8FE0)),
+        ("github",   Color(hex: 0xA48AE0)),
+    ]
+
+    /// A stable color for a brand name: a recognizable hue for brands we know,
+    /// otherwise derived from the name's hash. The same name always yields the
+    /// same color, so Netflix is always the same red.
     static func color(for name: String) -> Color {
+        let key = RecurringChargeDetector.key(for: name)
+        if let known = knownHues.first(where: { key.hasPrefix($0.keyPrefix) }) {
+            return known.color
+        }
         let hash = name.lowercased().unicodeScalars.reduce(0) { $0 &+ Int($1.value) }
         return palette[abs(hash) % palette.count]
     }
 
-    /// One or two uppercase initials for the monogram.
+    /// The single leading character of the name, case preserved — "Netflix"
+    /// is N, "iCloud+" is i — per the handoff's one-letter monograms.
     static func monogram(for name: String) -> String {
-        let words = name.split(separator: " ")
-        let letters = words.prefix(2).compactMap { $0.first }
-        let result = String(letters).uppercased()
-        return result.isEmpty ? "?" : result
+        guard let first = name.trimmingCharacters(in: .whitespacesAndNewlines).first else {
+            return "?"
+        }
+        return String(first)
     }
 }
 
@@ -46,7 +71,7 @@ struct BrandAvatar: View {
     var body: some View {
         let tint = BrandStyle.color(for: name)
         Text(BrandStyle.monogram(for: name))
-            .font(.system(size: size * 0.4, weight: .bold, design: .rounded))
+            .font(.system(size: size * 0.42, weight: .semibold))
             .foregroundStyle(tint)
             .frame(width: size, height: size)
             .background(tint.opacity(0.20), in: Circle())   // fill 20% of tint
