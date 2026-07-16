@@ -4,21 +4,33 @@
 //
 //  The human-in-the-loop step. Heuristic detection is fuzzy by nature, so the
 //  user reviews, toggles, and edits drafts before anything is committed to the
-//  local store. Nothing is persisted until "Save Selected" is tapped.
+//  local store. Nothing is persisted until "Save" is tapped.
+//
+//  Layout per the design handoff: one inset card per candidate — selection
+//  circle, editable name and price, a chip row (cycle · next renewal · charge
+//  count · state badges), and an expandable statement-evidence box.
 //
 
 import SwiftUI
 import SwiftData
 
 struct ScanReviewView: View {
-    /// The detected drafts, editable in place via toggles & steppers.
+    /// The detected drafts, editable in place.
     @State var drafts: [ScannedSubscriptionDraft]
 
     /// Where the drafts came from, recorded on saved records for transparency.
     let sourceLabel: String
 
+    /// How many source documents fed the scan, and what to call one — both
+    /// only feed the caption under the title.
+    var statementCount: Int = 1
+    var sourceNoun: String = "statement"
+
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+
+    /// Cards whose statement-evidence box is expanded.
+    @State private var expandedDraftIDs: Set<UUID> = []
 
     /// Live (non-trashed) subscriptions, used to flag duplicate drafts on
     /// appear and to update-in-place on save. Trashed records are excluded — a
@@ -28,11 +40,14 @@ struct ScanReviewView: View {
     private var existingSubscriptions: [Subscription]
 
     private var selectedCount: Int { drafts.filter(\.isSelected).count }
-    private var allSelected: Bool { !drafts.isEmpty && selectedCount == drafts.count }
 
-    /// Combined monthly-equivalent total of the currently checked rows.
-    private var selectedMonthlyTotal: Decimal {
-        drafts.filter(\.isSelected).reduce(Decimal(0)) { $0 + $1.monthlyEquivalentPrice }
+    private var caption: String {
+        ReviewCaption.text(
+            candidateCount: drafts.count,
+            statementCount: statementCount,
+            sourceNoun: sourceNoun,
+            chargeDates: drafts.flatMap { $0.transactions.compactMap(\.date) }
+        )
     }
 
     var body: some View {
@@ -48,18 +63,19 @@ struct ScanReviewView: View {
                     reviewList
                 }
             }
-            .navigationTitle("Review Findings")
+            .navigationTitle("Review")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
                 if !drafts.isEmpty {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(allSelected ? "Deselect All" : "Select All") {
-                            let newValue = !allSelected
-                            for index in drafts.indices { drafts[index].isSelected = newValue }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(selectedCount > 0 ? "Save \(selectedCount)" : "Save") {
+                            saveSelected()
                         }
+                        .fontWeight(.bold)
+                        .disabled(selectedCount == 0)
                     }
                 }
             }
@@ -70,11 +86,11 @@ struct ScanReviewView: View {
         }
     }
 
-    /// Flags drafts that already match a saved subscription and deselects them,
-    /// so re-importing a statement doesn't create duplicates. A match needs both
-    /// the same merchant key and a similar price, so distinct same-brand plans
-    /// (e.g. several "Apple" subscriptions) aren't all flagged off the first one.
-    /// The user can still re-select a flagged row to save it anyway.
+    /// Flags drafts that already match a saved subscription, so saving updates
+    /// the existing record in place instead of duplicating it. A match needs
+    /// both the same merchant key and a similar price, so distinct same-brand
+    /// plans (e.g. several "Apple" subscriptions) aren't all flagged off the
+    /// first one. Flagged drafts stay selected — "will update" is the default.
     private func markAlreadyTrackedDrafts() {
         guard !existingSubscriptions.isEmpty else { return }
         var liveByKey: [String: [Subscription]] = [:]
@@ -86,56 +102,69 @@ struct ScanReviewView: View {
             let price = drafts[index].price
             if let group = liveByKey[key], group.contains(where: { Self.pricesMatch($0.price, price) }) {
                 drafts[index].isAlreadyTracked = true
-                drafts[index].isSelected = false
             }
         }
     }
+
+    // MARK: - List
 
     private var reviewList: some View {
         List {
-            Section {
-                ForEach($drafts) { $draft in
-                    DraftRow(draft: $draft)
+            // One section per draft so each candidate reads as its own card.
+            ForEach($drafts) { $draft in
+                Section {
+                    CandidateCard(
+                        draft: $draft,
+                        isExpanded: expandedDraftIDs.contains(draft.id),
+                        onToggleEvidence: { toggleEvidence(for: draft.id) }
+                    )
+                } header: {
+                    // The caption rides above the first card, centered.
+                    if draft.id == drafts.first?.id {
+                        Text(caption)
+                            .font(.footnote)
+                            .foregroundStyle(Theme.secondary)
+                            .frame(maxWidth: .infinity)
+                            .textCase(nil)
+                            .padding(.bottom, 4)
+                    }
                 }
-            } header: {
-                Text("\(drafts.count) potential subscription\(drafts.count == 1 ? "" : "s") found")
-            } footer: {
-                Text("Detected on-device from your \(sourceLabel). Prices and cycles are best-guesses — edit any field before saving.")
             }
         }
+        .listStyle(.insetGrouped)
+        .listSectionSpacing(14)
         .scrollDismissesKeyboard(.interactively)
     }
 
-    /// Sticky bottom bar with the running total and the primary action.
-    private var saveBar: some View {
-        VStack(spacing: 10) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("\(selectedCount) selected")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.label)
-                    Text("\(CurrencyFormat.string(from: selectedMonthlyTotal)) / mo")
-                        .font(.tabsCaption)
-                        .foregroundStyle(Theme.secondary)
-                        .contentTransition(.numericText())
-                }
-                Spacer()
-                Button {
-                    saveSelected()
-                } label: {
-                    Text("Save Selected")
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(selectedCount == 0)
+    private func toggleEvidence(for id: UUID) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if expandedDraftIDs.contains(id) {
+                expandedDraftIDs.remove(id)
+            } else {
+                expandedDraftIDs.insert(id)
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 10)
-        .background(.bar)
+    }
+
+    /// Pinned primary action: full-width capsule with the live count.
+    private var saveBar: some View {
+        Button {
+            saveSelected()
+        } label: {
+            Text(selectedCount > 0
+                 ? "Save \(selectedCount) subscription\(selectedCount == 1 ? "" : "s")"
+                 : "Save subscriptions")
+                .font(.body.weight(.bold))
+                .foregroundStyle(.black)
+                .frame(maxWidth: .infinity)
+                .frame(height: 54)
+                .contentTransition(.numericText())
+        }
+        .background(Theme.accent.opacity(selectedCount == 0 ? 0.35 : 1), in: Capsule())
+        .disabled(selectedCount == 0)
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
     }
 
     // MARK: - Persistence
@@ -237,48 +266,96 @@ struct ScanReviewView: View {
     }
 }
 
-/// A single editable row: checkbox + name + price + cycle.
-private struct DraftRow: View {
+// MARK: - Candidate card
+
+/// One detected candidate: selection circle, editable name/price, chip row,
+/// and (when expanded) the statement lines it was detected from.
+private struct CandidateCard: View {
     @Binding var draft: ScannedSubscriptionDraft
+    let isExpanded: Bool
+    let onToggleEvidence: () -> Void
+
     @FocusState private var isNameFocused: Bool
-    /// Drives the transactions popover (tap, not long-press — long-press fought
-    /// with the name TextField and never fired reliably inside the List).
-    @State private var showingTransactions = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: Theme.Space.m) {
-            // Checkbox-style toggle — the ONLY selection control, so tapping the
-            // rest of the row never unexpectedly selects/deselects.
+        VStack(alignment: .leading, spacing: 10) {
+            headerRow
+            chipRow
+                .padding(.leading, 38)   // aligns under the name, past the circle
+            if isExpanded, !draft.transactions.isEmpty {
+                evidenceBox
+                    .padding(.leading, 38)
+            }
+        }
+        .padding(.vertical, 6)
+        .opacity(draft.isSelected ? 1 : 0.55)
+    }
+
+    private var headerRow: some View {
+        HStack(spacing: 12) {
+            // The ONLY selection control, so tapping the rest of the row never
+            // unexpectedly selects/deselects.
             Button {
-                draft.isSelected.toggle()
+                withAnimation(.easeInOut(duration: 0.2)) { draft.isSelected.toggle() }
             } label: {
-                Image(systemName: draft.isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
-                    .foregroundStyle(draft.isSelected ? Theme.accent : Theme.tertiary)
-                    .symbolEffect(.bounce, value: draft.isSelected)
+                selectionCircle
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Include \(draft.name)")
             .accessibilityValue(draft.isSelected ? "selected" : "not selected")
 
-            BrandAvatar(name: draft.name, size: 32)
-                .opacity(draft.isSelected ? 1 : 0.4)
+            TextField("Name", text: $draft.name)
+                .font(.headline)
+                .foregroundStyle(isNameFocused ? Theme.accent : Theme.label)
+                .focused($isNameFocused)
 
-            VStack(alignment: .leading, spacing: Theme.Space.xs) {
-                // Row 1: name, with the cycle pill anchored at the trailing
-                // edge so it never competes with the price for width (it used
-                // to wrap "Monthly" onto two lines).
-                HStack(spacing: Theme.Space.s) {
-                    TextField("Name", text: $draft.name)
-                        .font(.tabsHeadline)
-                        .foregroundStyle(isNameFocused ? Theme.accent : Theme.label)
-                        .focused($isNameFocused)
+            Spacer(minLength: 8)
 
-                    Spacer(minLength: Theme.Space.s)
+            TextField(
+                "Price",
+                value: $draft.price,
+                format: .currency(code: draft.currencyCode ?? CurrencyFormat.code)
+            )
+            .font(.body.weight(.bold))
+            .monospacedDigit()
+            .foregroundStyle(Theme.label)
+            .keyboardType(.decimalPad)
+            .multilineTextAlignment(.trailing)
+            .fixedSize()
+            .accessibilityLabel("Price for \(draft.name)")
+        }
+    }
 
-                    // Cycle menu styled as an accent pill. Changing it realigns
-                    // the renewal date in the setter, so a draft saved as Yearly
-                    // doesn't keep a monthly renewal.
+    private var selectionCircle: some View {
+        ZStack {
+            if draft.isSelected {
+                Circle().fill(Theme.accent)
+                Image(systemName: "checkmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.black)
+            } else {
+                Circle().strokeBorder(Theme.tertiary, lineWidth: 2)
+            }
+        }
+        .frame(width: 26, height: 26)
+    }
+
+    private var chipRow: some View {
+        // Wrapping layout isn't needed — at most three chips plus one badge —
+        // but keep them scrollable so long badge copy never truncates edits.
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                if draft.isAlreadyTracked {
+                    ReviewChip(text: "Already tracked — will update", style: .warning)
+                }
+                if draft.amountsVary {
+                    ReviewChip(text: "Amounts vary — looks one-off", style: .gray)
+                }
+
+                // Cycle chip doubles as the editor. Changing it realigns the
+                // renewal date in the setter, so a draft saved as Yearly
+                // doesn't keep a monthly renewal.
+                Menu {
                     Picker("Cycle", selection: Binding(
                         get: { draft.billingCycle },
                         set: { draft.realignRenewal(to: $0) }
@@ -287,123 +364,96 @@ private struct DraftRow: View {
                             Text(cycle.displayName).tag(cycle)
                         }
                     }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
-                    .font(.caption.weight(.medium))
-                    .tint(Theme.accent)
-                    .padding(.horizontal, 6)
-                    .background(Theme.accent.opacity(0.12), in: Capsule())
-                    .fixedSize()
+                } label: {
+                    ReviewChip(text: draft.billingCycle.displayName, style: .gray)
                 }
+                .buttonStyle(.plain)
 
-                // Row 2: price, qualifiers, and the charge-evidence link.
-                HStack(spacing: Theme.Space.s) {
-                    // Editable: detection often picks a slightly-off amount, so
-                    // the price can be corrected right here before saving.
-                    TextField(
-                        "Price",
-                        value: $draft.price,
-                        format: .currency(code: draft.currencyCode ?? CurrencyFormat.code)
-                    )
-                    .font(.tabsSubhead)
-                    .foregroundStyle(Theme.label)
-                    .keyboardType(.decimalPad)
-                    .fixedSize()
-                    .accessibilityLabel("Price for \(draft.name)")
+                ReviewChip(
+                    text: "Next \(draft.renewalDate.formatted(.dateTime.month(.abbreviated).day()))",
+                    style: .gray
+                )
 
-                    // Clarify the figure is an average when it spans charges.
-                    if draft.transactionCount > 1 {
-                        Text("avg\(draft.billingCycle.shortSuffix)")
-                            .font(.caption2)
-                            .foregroundStyle(Theme.secondary)
+                if !draft.transactions.isEmpty {
+                    Button(action: onToggleEvidence) {
+                        ReviewChip(
+                            text: "\(draft.transactionCount) charge\(draft.transactionCount == 1 ? "" : "s")",
+                            style: .accent
+                        )
                     }
-
-                    // Duplicate guard: this merchant is already on the home list.
-                    if draft.isAlreadyTracked {
-                        Text("Already tracked")
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(Theme.warning)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Theme.warning.opacity(0.14), in: Capsule())
-                            .fixedSize()
-                    }
-
-                    // Dedicated, reliable tap target to inspect the underlying charges.
-                    if !draft.transactions.isEmpty {
-                        Button {
-                            showingTransactions = true
-                        } label: {
-                            HStack(spacing: Theme.Space.xs) {
-                                Text(draft.transactionCount == 1
-                                     ? "1 charge"
-                                     : "\(draft.transactionCount) charges")
-                                Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold))
-                            }
-                            .font(.caption2.weight(.medium))
-                            .foregroundStyle(Theme.accent)
-                        }
-                        .buttonStyle(.plain)
-                        .popover(isPresented: $showingTransactions) {
-                            DraftTransactionsPreview(draft: draft)
-                                .presentationCompactAdaptation(.popover)
-                        }
-                        .accessibilityLabel("View detected charges")
-                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("View detected charges")
                 }
             }
         }
-        .padding(.vertical, Theme.Space.xs)
-        .opacity(draft.isSelected ? 1 : 0.55)
+    }
+
+    /// The statement lines this candidate was detected from — date, cleaned
+    /// merchant text, and the amount, one monospaced row per charge.
+    private var evidenceBox: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            ForEach(draft.transactions) { transaction in
+                HStack(spacing: 8) {
+                    Text(Self.shortDate(transaction.date))
+                        .foregroundStyle(Theme.secondary)
+                    Text(RecurringChargeDetector.merchantDescription(from: transaction.rawLine))
+                        .foregroundStyle(Theme.secondary)
+                        .lineLimit(1)
+                    Spacer(minLength: 8)
+                    Text(transaction.formattedAmount)
+                        .foregroundStyle(Theme.accent)
+                }
+                .font(.system(size: 11, design: .monospaced))
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.black.opacity(0.45))
+        )
+        .transition(.opacity)
+    }
+
+    private static func shortDate(_ date: Date?) -> String {
+        guard let date else { return "—    " }
+        return date.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
     }
 }
 
-/// The popup shown on long-press: every detected charge for a draft, with dates.
-private struct DraftTransactionsPreview: View {
-    let draft: ScannedSubscriptionDraft
+// MARK: - Chip
+
+/// A small rounded badge used across the review cards. 12/600, radius 7.
+private struct ReviewChip: View {
+    enum Style { case gray, accent, warning }
+
+    let text: String
+    var style: Style = .gray
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Space.m) {
-            HStack(spacing: Theme.Space.s) {
-                BrandAvatar(name: draft.name, size: 32)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(draft.name).font(.tabsHeadline)
-                    Text("Avg \(draft.formattedPrice) · \(draft.transactionCount) charge\(draft.transactionCount == 1 ? "" : "s")")
-                        .font(.caption)
-                        .foregroundStyle(Theme.secondary)
-                }
-            }
+        Text(text)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(foreground)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(background, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+            .fixedSize()
+    }
 
-            Divider()
-
-            // Scrollable so a brand with many charges doesn't overflow the popover.
-            ScrollView {
-                VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    ForEach(draft.transactions) { tx in
-                        VStack(alignment: .leading, spacing: 1) {
-                            HStack {
-                                Text(tx.dateText)
-                                    .foregroundStyle(Theme.secondary)
-                                Spacer(minLength: Theme.Space.l)
-                                Text(tx.formattedAmount)
-                                    .monospacedDigit()
-                                    .foregroundStyle(Theme.label)
-                            }
-                            .font(.subheadline)
-
-                            // Raw source line — lets you spot a bad detection.
-                            Text(tx.rawLine)
-                                .font(.caption2.monospaced())
-                                .foregroundStyle(Theme.tertiary)
-                                .lineLimit(1)
-                        }
-                    }
-                }
-            }
-            .frame(maxHeight: 260)
+    private var foreground: Color {
+        switch style {
+        case .gray:    return Theme.secondary
+        case .accent:  return Theme.accent
+        case .warning: return Theme.warning
         }
-        .padding(Theme.Space.l)
-        .frame(width: 300)
+    }
+
+    private var background: Color {
+        switch style {
+        case .gray:    return Color(uiColor: .tertiarySystemFill)
+        case .accent:  return Theme.accent.opacity(0.14)
+        case .warning: return Theme.warning.opacity(0.16)
+        }
     }
 }
 
@@ -413,18 +463,22 @@ private struct DraftTransactionsPreview: View {
             ScannedSubscriptionDraft(
                 name: "Netflix", price: 15.49,
                 transactions: [
-                    ScannedTransaction(amount: 15.49, date: .now.addingTimeInterval(-86_400 * 5), rawLine: "NETFLIX.COM  -15.49"),
-                    ScannedTransaction(amount: 15.49, date: .now.addingTimeInterval(-86_400 * 35), rawLine: "NETFLIX.COM  -15.49"),
-                    ScannedTransaction(amount: 14.99, date: .now.addingTimeInterval(-86_400 * 65), rawLine: "NETFLIX.COM  -14.99"),
+                    ScannedTransaction(amount: 15.49, date: .now.addingTimeInterval(-86_400 * 5), rawLine: "05/15 NETFLIX.COM CA  -15.49", currencyCode: "USD"),
+                    ScannedTransaction(amount: 15.49, date: .now.addingTimeInterval(-86_400 * 35), rawLine: "06/15 NETFLIX.COM CA  -15.49", currencyCode: "USD"),
                 ]
             ),
             ScannedSubscriptionDraft(
                 name: "Spotify", price: 11.99,
                 transactions: [ScannedTransaction(amount: 11.99, date: .now, rawLine: "Spotify USA  11.99")]
             ),
-            ScannedSubscriptionDraft(name: "Adobe", price: 54.99),
+            ScannedSubscriptionDraft(
+                name: "Shell Oil", price: 42.13, isSelected: false,
+                transactions: [ScannedTransaction(amount: 42.13, date: .now, rawLine: "05/02 SHELL OIL 5744  42.13")],
+                amountsVary: true
+            ),
         ],
-        sourceLabel: "PDF statement"
+        sourceLabel: "PDF statement",
+        statementCount: 3
     )
     .modelContainer(for: Subscription.self, inMemory: true)
 }

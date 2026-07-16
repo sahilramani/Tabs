@@ -53,6 +53,16 @@ enum StatementScanError: LocalizedError, Equatable {
     }
 }
 
+/// What one scan produced: the detected drafts plus how many source documents
+/// (screenshots / PDF statements) actually contributed text — the review
+/// screen's caption reports both.
+struct ScanBatch {
+    let drafts: [ScannedSubscriptionDraft]
+    let statementCount: Int
+    /// Singular noun for the caption, e.g. "screenshot" or "statement".
+    let sourceNoun: String
+}
+
 /// Parses on-device statement sources (images, PDFs) into subscription drafts.
 ///
 /// Two layers:
@@ -73,7 +83,7 @@ final class LocalStatementScannerService {
     /// Recognizes text in an image entirely on-device and returns drafts.
     ///
     /// - Parameter imageData: Raw image bytes (e.g. from `PhotosPicker`).
-    func scanImage(data imageData: Data) async throws -> [ScannedSubscriptionDraft] {
+    func scanImage(data imageData: Data) async throws -> ScanBatch {
         guard let uiImage = UIImage(data: imageData), let cgImage = uiImage.cgImage else {
             throw StatementScanError.invalidImage
         }
@@ -81,7 +91,7 @@ final class LocalStatementScannerService {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw StatementScanError.noTextFound
         }
-        return try parseDrafts(from: text)
+        return ScanBatch(drafts: try parseDrafts(from: text), statementCount: 1, sourceNoun: "screenshot")
     }
 
     /// Wraps `VNRecognizeTextRequest` in async/await. Runs off the main thread.
@@ -117,7 +127,7 @@ final class LocalStatementScannerService {
     // MARK: - 1b. PDF extraction (PDFKit)
 
     /// Loads a single PDF and returns drafts. Convenience wrapper over `scanPDFs`.
-    func scanPDF(at url: URL) async throws -> [ScannedSubscriptionDraft] {
+    func scanPDF(at url: URL) async throws -> ScanBatch {
         try await scanPDFs(at: [url])
     }
 
@@ -129,7 +139,7 @@ final class LocalStatementScannerService {
     /// into a single draft, while extra months raise the chance of catching a
     /// subscription a single statement happened to miss (and confirm recurrence).
     /// A file that can't be opened is skipped so one bad PDF doesn't fail the batch.
-    func scanPDFs(at urls: [URL]) async throws -> [ScannedSubscriptionDraft] {
+    func scanPDFs(at urls: [URL]) async throws -> ScanBatch {
         var combined = ""
         var readCount = 0
         var sawAnyPDF = false
@@ -185,7 +195,7 @@ final class LocalStatementScannerService {
         guard !combined.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw StatementScanError.emptyDocument
         }
-        return try parseDrafts(from: combined)
+        return ScanBatch(drafts: try parseDrafts(from: combined), statementCount: readCount, sourceNoun: "statement")
     }
 
     /// Expands a picked URL into the PDF files it represents:

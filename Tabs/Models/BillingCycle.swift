@@ -62,6 +62,16 @@ enum BillingCycle: String, Codable, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Spelled-out rate label for the detail header, e.g. "per month".
+    var perLabel: String {
+        switch self {
+        case .weekly:    return "per week"
+        case .monthly:   return "per month"
+        case .quarterly: return "per quarter"
+        case .yearly:    return "per year"
+        }
+    }
+
     /// Short suffix for inline price labels, e.g. "/mo".
     var shortSuffix: String {
         switch self {
