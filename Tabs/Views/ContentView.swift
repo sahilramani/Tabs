@@ -2,9 +2,10 @@
 //  ContentView.swift
 //  Tabs
 //
-//  The home screen: lists locally-stored subscriptions and offers the two
-//  on-device import paths — "Scan Screenshot" (Vision) and "Import PDF
-//  Statement" (PDFKit). All scanning happens locally; see
+//  The home screen: total monthly spend plus every locally-stored
+//  subscription, sorted by soonest renewal. The floating add button opens the
+//  import sheet — screenshot scan (Vision), PDF/folder import (PDFKit), or
+//  manual entry. All scanning happens locally; see
 //  `LocalStatementScannerService`.
 //
 
@@ -26,9 +27,14 @@ struct ContentView: View {
     /// Re-checks past-due renewal dates when the app returns to the foreground.
     @Environment(\.scenePhase) private var scenePhase
 
-    // Import flow state.
+    // Import flow state. The sheet picks a path; the matching picker is
+    // presented from here once the sheet has dismissed.
+    @State private var isShowingImportSheet = false
+    @State private var pendingImportAction: ImportAction?
+    @State private var isShowingPhotoPicker = false
     @State private var photoItem: PhotosPickerItem?
     @State private var isShowingPDFPicker = false
+    @State private var isShowingFolderPicker = false
     @State private var isScanning = false
     @State private var scanStatusText = ""
     @State private var scanStep = ""
@@ -38,12 +44,19 @@ struct ContentView: View {
     // Manual-add sheet state.
     @State private var isShowingAddSheet = false
 
-    // About sheet state.
+    // About sheet state (gear button).
     @State private var isShowingAbout = false
 
     // Review sheet state. Held as a single identifiable value so the sheet has
     // a stable identity (avoids re-presentation loops from recomputed IDs).
     @State private var reviewItem: DraftsBox?
+
+    #if DEBUG
+    /// `--seed-review` fires once per launch. `.task` re-runs whenever this
+    /// view reappears (e.g. popping back from a detail push), which would
+    /// otherwise re-present the demo sheet forever.
+    @State private var hasSeededReview = false
+    #endif
 
     // Error alert state.
     @State private var errorMessage: String?
@@ -95,6 +108,12 @@ struct ContentView: View {
                 subscriptionList
                 if isScanning { scanningOverlay }
             }
+            .overlay(alignment: .bottomTrailing) {
+                addButton
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 30)
+                    .opacity(isScanning ? 0 : 1)
+            }
             // Folders and PDFs can also be dragged in from Finder (Catalyst)
             // or another app (iPad). Decoded via NSItemProvider's file-url
             // representation — the typed `dropDestination(for: URL.self)`
@@ -112,14 +131,6 @@ struct ContentView: View {
             }
             .navigationTitle("Tabs")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        isShowingAbout = true
-                    } label: {
-                        Image(systemName: "info.circle")
-                    }
-                    .accessibilityLabel("About Tabs")
-                }
                 if !trashedSubscriptions.isEmpty {
                     ToolbarItem(placement: .topBarLeading) {
                         NavigationLink {
@@ -145,14 +156,20 @@ struct ContentView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isShowingAddSheet = true
+                        isShowingAbout = true
                     } label: {
-                        Image(systemName: "plus")
+                        Image(systemName: "gearshape")
                     }
-                    .accessibilityLabel("Add subscription manually")
+                    .accessibilityLabel("Settings and about")
                 }
             }
-            .safeAreaInset(edge: .bottom) { importBar }
+            // Import sheet: picks a path, then the matching picker presents
+            // from here once the sheet is gone.
+            .sheet(isPresented: $isShowingImportSheet, onDismiss: performPendingImportAction) {
+                ImportSheetView { action in
+                    pendingImportAction = action
+                }
+            }
             // Manual entry path.
             .sheet(isPresented: $isShowingAddSheet) {
                 AddSubscriptionView()
@@ -167,8 +184,12 @@ struct ContentView: View {
                 #if DEBUG
                 // Present the review sheet with sample drafts for demos and
                 // App Store screenshots, without driving a real import.
-                if reviewItem == nil, CommandLine.arguments.contains("--seed-review") {
-                    reviewItem = DraftsBox(drafts: Self.demoReviewDrafts, source: "bank statements")
+                if !hasSeededReview, reviewItem == nil, CommandLine.arguments.contains("--seed-review") {
+                    hasSeededReview = true
+                    reviewItem = DraftsBox(
+                        drafts: Self.demoReviewDrafts, source: "bank statements",
+                        statementCount: 3, sourceNoun: "statement"
+                    )
                 }
                 #endif
                 rollOverdueRenewals()
@@ -182,13 +203,21 @@ struct ContentView: View {
             }
             // Image path: PhotosPicker binds a selected item; we load its data
             // and hand it to Vision.
+            .photosPicker(
+                isPresented: $isShowingPhotoPicker,
+                selection: $photoItem,
+                matching: .images,
+                photoLibrary: .shared()
+            )
             .onChange(of: photoItem) { _, newItem in
                 guard let newItem else { return }
                 handlePickedPhoto(newItem)
             }
-            // PDF path.
+            // PDF path — just PDFs; the folder path presents its own picker so
+            // each import-sheet entry does one obvious thing.
             .sheet(isPresented: $isShowingPDFPicker) {
                 PDFDocumentPicker(
+                    contentTypes: [.pdf],
                     onPick: { urls in
                         isShowingPDFPicker = false
                         handlePickedPDFs(urls)
@@ -197,9 +226,26 @@ struct ContentView: View {
                 )
                 .ignoresSafeArea()
             }
+            // Folder path.
+            .sheet(isPresented: $isShowingFolderPicker) {
+                PDFDocumentPicker(
+                    contentTypes: [.folder],
+                    onPick: { urls in
+                        isShowingFolderPicker = false
+                        handlePickedPDFs(urls)
+                    },
+                    onCancel: { isShowingFolderPicker = false }
+                )
+                .ignoresSafeArea()
+            }
             // Review path: presented once drafts exist.
             .sheet(item: $reviewItem) { box in
-                ScanReviewView(drafts: box.drafts, sourceLabel: box.source)
+                ScanReviewView(
+                    drafts: box.drafts,
+                    sourceLabel: box.source,
+                    statementCount: box.statementCount,
+                    sourceNoun: box.sourceNoun
+                )
             }
             .alert(
                 "Couldn't Import",
@@ -223,6 +269,23 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Floating add button
+
+    /// The 60 pt circular entry point to the import sheet — Liquid Glass on
+    /// iOS 26, a plain accent circle earlier.
+    private var addButton: some View {
+        Button {
+            isShowingImportSheet = true
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 24, weight: .semibold))
+                .frame(width: 60, height: 60)
+        }
+        .modifier(AddButtonStyle())
+        .disabled(isScanning)
+        .accessibilityLabel("Add subscriptions")
+    }
+
     // MARK: - Subscriptions list
 
     @ViewBuilder
@@ -234,11 +297,11 @@ struct ContentView: View {
                 Text("Scan a screenshot or import a PDF bank statement to find subscriptions — all processed privately on your device.")
             } actions: {
                 Button {
-                    isShowingAddSheet = true
+                    isShowingImportSheet = true
                 } label: {
-                    Label("Add Manually", systemImage: "plus")
+                    Label("Add Subscriptions", systemImage: "plus")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.borderedProminent)
 
                 Label("Your data never leaves this phone", systemImage: "lock.shield")
                     .font(.footnote)
@@ -247,19 +310,22 @@ struct ContentView: View {
         } else {
             List {
                 Section {
-                    SpendSummaryCard(monthlyTotal: totalMonthlySpend, count: activeSubscriptions.count, currencyCode: dominantCurrencyCode)
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 12, trailing: 16))
+                    // A hair of leading inset keeps the first glyph clear of
+                    // the row's clipping edge (0 shaved the "M" off MONTHLY).
+                    spendHeader
+                        .listRowInsets(EdgeInsets(top: 8, leading: 4, bottom: 16, trailing: 4))
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
 
                     if remindersDisabled {
                         reminderBanner
-                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
+                            .listRowInsets(EdgeInsets(top: 0, leading: 4, bottom: 12, trailing: 4))
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
                     }
                 }
-                Section("Subscriptions") {
+
+                Section("Active") {
                     ForEach(activeSubscriptions) { subscription in
                         NavigationLink {
                             SubscriptionDetailView(subscription: subscription)
@@ -310,7 +376,48 @@ struct ContentView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            // Keep the last row clear of the floating add button.
+            .contentMargins(.bottom, 96, for: .scrollContent)
         }
+    }
+
+    // MARK: - Spend header
+
+    /// The plain, left-aligned spend summary: caption, big tabular figure with
+    /// the cents dimmed, and the active count in the accent color.
+    private var spendHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("MONTHLY SPEND")
+                .font(.footnote.weight(.semibold))
+                .kerning(0.8)
+                .foregroundStyle(Theme.secondary)
+
+            Text(Self.dimmedCents(CurrencyFormat.string(from: totalMonthlySpend, code: dominantCurrencyCode)))
+                .font(.system(size: 56, weight: .heavy))
+                .monospacedDigit()
+                .foregroundStyle(Theme.label)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .contentTransition(.numericText())
+
+            Text("across \(activeSubscriptions.count) active subscription\(activeSubscriptions.count == 1 ? "" : "s")")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Theme.accent)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        // Read as one summary: "Monthly spend, $84.97, across 7 active…".
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Dims everything from the decimal separator on (".97") to 35% so the
+    /// dollars carry the visual weight, per the design handoff.
+    private static func dimmedCents(_ formatted: String) -> AttributedString {
+        var attributed = AttributedString(formatted)
+        let separator = Locale.current.decimalSeparator ?? "."
+        if let range = attributed.range(of: separator, options: .backwards) {
+            attributed[range.lowerBound..<attributed.endIndex].foregroundColor = Theme.label.opacity(0.35)
+        }
+        return attributed
     }
 
     /// Shown when notification permission is denied: renewal reminders won't
@@ -399,87 +506,30 @@ struct ContentView: View {
         NotificationManager.shared.cancelReminder(for: subscription)
     }
 
-    // MARK: - Import bar (the two required buttons)
+    // MARK: - Import routing
 
-    private var importBar: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 12) {
-                // "Scan Screenshot" → PhotosPicker (Vision OCR).
-                PhotosPicker(selection: $photoItem, matching: .images, photoLibrary: .shared()) {
-                    Label("Scan Screenshot", systemImage: "text.viewfinder")
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                }
-                .buttonStyle(.borderedProminent)
-
-                // "Import PDF Statement" → UIDocumentPickerViewController (PDFKit).
-                #if targetEnvironment(macCatalyst)
-                // The UIKit picker can't return a folder on the Mac, so the
-                // folder path goes through a real NSOpenPanel instead.
-                Menu {
-                    Button {
-                        isShowingPDFPicker = true
-                    } label: {
-                        Label("Choose PDFs…", systemImage: "doc.text.magnifyingglass")
-                    }
-                    Button {
-                        let urls = PDFDocumentPicker.chooseFoldersViaOpenPanel()
-                        if !urls.isEmpty { handlePickedPDFs(urls) }
-                    } label: {
-                        Label("Choose Statement Folder…", systemImage: "folder")
-                    }
-                } label: {
-                    Label("Import PDF", systemImage: "doc.text.magnifyingglass")
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                }
-                .buttonStyle(.bordered)
-                #else
-                Button {
-                    isShowingPDFPicker = true
-                } label: {
-                    Label("Import PDF", systemImage: "doc.text.magnifyingglass")
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                }
-                .buttonStyle(.bordered)
-                #endif
-            }
-            .controlSize(.large)
-            .disabled(isScanning)
-
-            // Discoverability hint for folder import.
-            Text("Tip: pick a folder — subfolders are scanned too")
-                .font(.caption2)
-                .foregroundStyle(Theme.tertiary)
-
-            Label("Processed 100% on-device", systemImage: "lock.shield.fill")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-
-            Button {
-                isShowingAbout = true
-            } label: {
-                Text(AppInfo.displayVersion)
-                    .font(.caption2)
-                    .foregroundStyle(Theme.tertiary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("About Tabs, version \(AppInfo.displayVersion)")
+    /// Presents whichever picker the import sheet chose, after the sheet has
+    /// fully dismissed (presenting during dismissal drops the presentation).
+    private func performPendingImportAction() {
+        guard let action = pendingImportAction else { return }
+        pendingImportAction = nil
+        switch action {
+        case .scanScreenshot:
+            isShowingPhotoPicker = true
+        case .importPDF:
+            isShowingPDFPicker = true
+        case .importFolder:
+            #if targetEnvironment(macCatalyst)
+            // The UIKit picker can't return a folder on the Mac; use a real
+            // NSOpenPanel instead (runs its own modal loop, so no sheet state).
+            let urls = PDFDocumentPicker.chooseFoldersViaOpenPanel()
+            if !urls.isEmpty { handlePickedPDFs(urls) }
+            #else
+            isShowingFolderPicker = true
+            #endif
+        case .addManually:
+            isShowingAddSheet = true
         }
-        .padding(.horizontal)
-        .padding(.top, 8)
-        .padding(.bottom, 6)
-        .background(.bar)
     }
 
     // MARK: - Loading state
@@ -591,7 +641,7 @@ struct ContentView: View {
     /// thread, then either presents the review sheet or surfaces an error.
     private func runScan(
         source: String,
-        work: @escaping () async throws -> [ScannedSubscriptionDraft],
+        work: @escaping () async throws -> ScanBatch,
         cleanup: (() -> Void)? = nil
     ) {
         withAnimation { isScanning = true }
@@ -604,11 +654,14 @@ struct ContentView: View {
                 cleanup?()
             }
             do {
-                let drafts = try await work()
+                let batch = try await work()
                 // The user may have tapped Cancel while extraction ran; don't
                 // pop the review sheet for an abandoned scan.
                 guard !Task.isCancelled else { return }
-                reviewItem = DraftsBox(drafts: drafts, source: source)
+                reviewItem = DraftsBox(
+                    drafts: batch.drafts, source: source,
+                    statementCount: batch.statementCount, sourceNoun: batch.sourceNoun
+                )
             } catch is CancellationError {
                 return
             } catch let error as StatementScanError {
@@ -624,97 +677,76 @@ struct ContentView: View {
     // MARK: - Sheet item plumbing
 
     /// `.sheet(item:)` needs an `Identifiable`. We box the drafts (plus their
-    /// source label) so the sheet presents exactly when a scan produces results.
+    /// source label and scan metadata) so the sheet presents exactly when a
+    /// scan produces results.
     private struct DraftsBox: Identifiable {
         let id = UUID()
         let drafts: [ScannedSubscriptionDraft]
         let source: String
+        let statementCount: Int
+        let sourceNoun: String
     }
 
     #if DEBUG
-    /// Sample drafts mirroring the `samples/sample-statement.pdf` detections,
-    /// used by the `--seed-review` launch argument for screenshots.
+    /// Sample drafts mirroring the design handoff's review screen, used by the
+    /// `--seed-review` launch argument for demos and screenshots.
     private static var demoReviewDrafts: [ScannedSubscriptionDraft] {
-        func tx(_ amount: Decimal, _ rawLine: String, _ daysAgo: Double) -> ScannedTransaction {
-            ScannedTransaction(amount: amount, date: .now.addingTimeInterval(-86_400 * daysAgo), rawLine: rawLine, currencyCode: "USD")
+        func day(_ month: Int, _ day: Int) -> Date {
+            Calendar.current.date(from: DateComponents(year: 2026, month: month, day: day))!
+        }
+        func tx(_ amount: Decimal, _ month: Int, _ dayOfMonth: Int, _ rawLine: String) -> ScannedTransaction {
+            ScannedTransaction(amount: amount, date: day(month, dayOfMonth), rawLine: rawLine, currencyCode: "USD")
         }
         return [
-            ScannedSubscriptionDraft(name: "Netflix", price: 15.49, currencyCode: "USD", transactions: [tx(15.49, "03/02 NETFLIX.COM  $15.49", 12)]),
-            ScannedSubscriptionDraft(name: "Spotify", price: 11.99, currencyCode: "USD", transactions: [tx(11.99, "03/05 SPOTIFY USA  $11.99", 9)]),
-            ScannedSubscriptionDraft(name: "Hulu", price: 17.99, currencyCode: "USD", transactions: [tx(17.99, "03/08 HULU 877-8244808  $17.99", 6)]),
-            ScannedSubscriptionDraft(name: "iCloud+", price: 2.99, currencyCode: "USD", transactions: [tx(2.99, "03/12 ICLOUD+ APPLE.COM/BILL  $2.99", 2)]),
-            ScannedSubscriptionDraft(name: "Adobe Creative Cloud", price: 54.99, currencyCode: "USD", transactions: [tx(54.99, "03/14 ADOBE CREATIVE CLOUD  $54.99", 30)]),
-            ScannedSubscriptionDraft(name: "Amazon Prime", price: 139, billingCycle: .yearly, currencyCode: "USD", transactions: [tx(139, "03/15 AMAZON PRIME  $139.00", 1)]),
-            ScannedSubscriptionDraft(name: "YouTube Premium", price: 13.99, currencyCode: "USD", transactions: [tx(13.99, "03/22 YOUTUBEPREMIUM  $13.99", 20)]),
-            ScannedSubscriptionDraft(name: "Disney+", price: 13.99, currencyCode: "USD", transactions: [tx(13.99, "03/25 DISNEY PLUS  $13.99", 16)]),
-            ScannedSubscriptionDraft(name: "Comcast Xfinity", price: 79.00, currencyCode: "USD", transactions: [tx(79.00, "03/27 COMCAST XFINITY  $79.00", 18)]),
+            ScannedSubscriptionDraft(name: "Netflix", price: 15.49, currencyCode: "USD", transactions: [
+                tx(15.49, 6, 15, "06/15 NETFLIX.COM CA  $15.49"),
+                tx(15.49, 5, 15, "05/15 NETFLIX.COM CA  $15.49"),
+                tx(15.49, 4, 15, "04/15 NETFLIX.COM CA  $15.49"),
+                tx(15.49, 3, 15, "03/15 NETFLIX.COM CA  $15.49"),
+            ]),
+            ScannedSubscriptionDraft(name: "Adobe Creative Cloud", price: 22.99, currencyCode: "USD", transactions: [
+                tx(22.99, 6, 22, "06/22 ADOBE CREATIVE CLOUD  $22.99"),
+                tx(22.99, 5, 22, "05/22 ADOBE CREATIVE CLOUD  $22.99"),
+                tx(22.99, 4, 22, "04/22 ADOBE CREATIVE CLOUD  $22.99"),
+            ]),
+            ScannedSubscriptionDraft(name: "Spotify", price: 11.99, currencyCode: "USD", transactions: [
+                tx(11.99, 6, 5, "06/05 SPOTIFY USA  $11.99"),
+                tx(11.99, 5, 5, "05/05 SPOTIFY USA  $11.99"),
+            ]),
+            ScannedSubscriptionDraft(name: "Shell Oil", price: 42.13, currencyCode: "USD", isSelected: false, transactions: [
+                tx(42.13, 6, 12, "06/12 SHELL OIL 57444 MOUNTAIN VIEW  $42.13"),
+                tx(51.72, 5, 14, "05/14 SHELL OIL 57444 MOUNTAIN VIEW  $51.72"),
+                tx(38.10, 4, 11, "04/11 SHELL OIL 57444 MOUNTAIN VIEW  $38.10"),
+            ], amountsVary: true),
         ]
     }
     #endif
 }
 
-/// A summary card showing combined monthly spend across all subscriptions.
-private struct SpendSummaryCard: View {
-    let monthlyTotal: Decimal
-    let count: Int
-    let currencyCode: String
-
-    /// "N active subscriptions · $X / yr" as a single string (avoids stray gaps).
-    private var meta: String {
-        let noun = count == 1 ? "subscription" : "subscriptions"
-        let yearly = CurrencyFormat.string(from: monthlyTotal * 12, code: currencyCode)
-        return "\(count) active \(noun) · \(yearly) / yr"
+/// The floating add button's chrome: Liquid Glass on iOS 26, a plain accent
+/// circle with a soft shadow on iOS 17–18 (and on pre-Xcode-26 toolchains).
+private struct AddButtonStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        #if compiler(>=6.2)
+        if #available(iOS 26, *) {
+            content
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.circle)
+                .tint(Theme.accent)
+        } else {
+            fallback(content: content)
+        }
+        #else
+        fallback(content: content)
+        #endif
     }
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Space.xs) {
-            HStack(alignment: .top) {
-                Text("Monthly spend")
-                    .font(.tabsSubhead)
-                    .foregroundStyle(Theme.secondary)
-                Spacer()
-                // On-device privacy pill.
-                Label("On-device", systemImage: "lock.shield")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(Theme.accent)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Theme.accent.opacity(0.14), in: Capsule())
-            }
-
-            Text(CurrencyFormat.string(from: monthlyTotal, code: currencyCode))
-                .font(.tabsCurrency())
-                .foregroundStyle(Theme.label)
-                .contentTransition(.numericText())
-
-            Label(meta, systemImage: "repeat")
-                .font(.tabsCaption)
-                .foregroundStyle(Theme.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Theme.Space.xl)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
-                .fill(Theme.bgElevated)
-                .overlay(
-                    RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
-                        .fill(Theme.accent.opacity(0.11))
-                )
-                // Soft accent glow from the top-right corner.
-                .overlay(alignment: .topTrailing) {
-                    RadialGradient(
-                        colors: [Theme.accent.opacity(0.22), .clear],
-                        center: .topTrailing, startRadius: 0, endRadius: 220
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
-                }
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
-                .strokeBorder(Theme.accent.opacity(0.28), lineWidth: 1)
-        )
-        // Read as one summary: "Monthly spend, $123, 8 active subscriptions…".
-        .accessibilityElement(children: .combine)
+    private func fallback(content: Content) -> some View {
+        content
+            .buttonStyle(.plain)
+            .foregroundStyle(.white)
+            .background(Circle().fill(Theme.accent))
+            .shadow(color: .black.opacity(0.35), radius: 14, y: 6)
     }
 }
 
@@ -727,11 +759,12 @@ private struct SubscriptionRow: View {
         HStack(spacing: 12) {
             BrandAvatar(name: subscription.name)
 
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(subscription.name)
-                    .font(.tabsHeadline)
+                    .font(.headline)
                     .foregroundStyle(Theme.label)
-                statusBadge
+                subtitle
+                    .font(.footnote)
             }
 
             Spacer()
@@ -742,45 +775,43 @@ private struct SubscriptionRow: View {
                     .monospacedDigit()
                     .foregroundStyle(Theme.label)
                     .strikethrough(!subscription.isActive, color: Theme.tertiary)
-                Text(subscription.billingCycle.shortSuffix)
-                    .font(.caption2)
-                    .foregroundStyle(Theme.secondary)
+                if subscription.isActive, subscription.billingCycle != .monthly {
+                    Text(subscription.billingCycle.shortSuffix)
+                        .font(.caption2)
+                        .foregroundStyle(Theme.secondary)
+                }
             }
         }
         .padding(.vertical, 4)
         // A cancelled row reads as archived, not actionable.
         .opacity(subscription.isActive ? 1 : 0.55)
-        // One element for VoiceOver: "Netflix, renews in 3 days, $15.49, /mo".
+        // One element for VoiceOver: "Netflix, renews in 3 days, $15.49".
         .accessibilityElement(children: .combine)
     }
 
-    /// Renewal proximity while active, or the cancelled date once archived.
+    /// Renewal proximity while active — in the accent color when it's ≤3 days
+    /// out (the "act now" window) — or the cancelled date once archived.
     @ViewBuilder
-    private var statusBadge: some View {
+    private var subtitle: some View {
         if let cancelledAt = subscription.cancelledAt {
-            HStack(spacing: Theme.Space.xs) {
-                Image(systemName: "xmark.circle")
-                Text("Cancelled \(cancelledAt.formatted(.dateTime.month().day()))")
-            }
-            .font(.tabsCaption)
-            .foregroundStyle(Theme.tertiary)
+            Text("Cancelled \(cancelledAt.formatted(.dateTime.month(.abbreviated).day()))")
+                .foregroundStyle(Theme.tertiary)
         } else {
             let days = subscription.daysUntilRenewal
-            let text: String = {
-                switch days {
-                case ..<0:  return "Renewed"
-                case 0:     return "Renews today"
-                case 1...7: return "Renews in \(days)d"
-                default:    return "Renews \(subscription.renewalDate.formatted(.dateTime.month().day()))"
-                }
-            }()
-
-            HStack(spacing: Theme.Space.xs) {
-                Image(systemName: "clock")
-                Text(text)
+            switch days {
+            case ..<0:
+                Text("Renewed")
+                    .foregroundStyle(Theme.secondary)
+            case 0:
+                Text("Renews today")
+                    .foregroundStyle(Theme.accent)
+            case 1...3:
+                Text("Renews in \(days) day\(days == 1 ? "" : "s")")
+                    .foregroundStyle(Theme.accent)
+            default:
+                Text("Renews \(subscription.renewalDate.formatted(.dateTime.month(.abbreviated).day()))")
+                    .foregroundStyle(Theme.secondary)
             }
-            .font(.tabsCaption)
-            .foregroundStyle(Theme.renewalColor(daysUntil: days))
         }
     }
 }

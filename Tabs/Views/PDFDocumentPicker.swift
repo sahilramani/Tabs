@@ -15,6 +15,10 @@ import UniformTypeIdentifiers
 /// whole folder of monthly statements — folder expansion happens in the scanner.
 struct PDFDocumentPicker: UIViewControllerRepresentable {
 
+    /// What the picker lets the user choose. The import sheet narrows this to
+    /// just PDFs or just folders so each entry point does one obvious thing.
+    var contentTypes: [UTType] = [.pdf, .folder]
+
     /// Called with the selected URLs (PDF files and/or folders). These are
     /// security-scoped, in-place URLs; the scanner balances access calls and
     /// reads them entirely on-device.
@@ -36,7 +40,7 @@ struct PDFDocumentPicker: UIViewControllerRepresentable {
         // The "Designed for iPad" variant is disabled — its remote picker can
         // never return a folder, only navigate into it.
         let picker = UIDocumentPickerViewController(
-            forOpeningContentTypes: [.pdf, .folder], asCopy: false
+            forOpeningContentTypes: contentTypes, asCopy: false
         )
         picker.allowsMultipleSelection = true
         picker.delegate = context.coordinator

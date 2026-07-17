@@ -50,19 +50,9 @@ enum Theme {
 
 // MARK: - Typography (SF Pro)
 extension Font {
-    static let tabsLargeTitle = Font.largeTitle.bold()            // 34 / 700
-    static let tabsTitle2     = Font.title2.bold()                // 22 / 700
     static let tabsHeadline   = Font.headline                     // 17 / 600
-    static let tabsBody       = Font.body                         // 17 / 400
     static let tabsSubhead    = Font.subheadline.weight(.medium)  // 15 / 500
     static let tabsCaption    = Font.caption                      // 12 / 400
-
-    /// Currency — rounded design + monospaced digits so totals don't jitter.
-    /// Anchored to the Large Title text style so it tracks Dynamic Type
-    /// instead of pinning at a fixed point size.
-    static func tabsCurrency() -> Font {
-        .system(.largeTitle, design: .rounded, weight: .bold).monospacedDigit()
-    }
 }
 
 // MARK: - "Liquid Glass" surface
@@ -100,17 +90,5 @@ extension View {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .strokeBorder(Theme.glassBorder, lineWidth: 1)
             )
-    }
-}
-
-// MARK: - Renewal proximity → semantic color (used by SubscriptionRow)
-extension Theme {
-    static func renewalColor(daysUntil days: Int) -> Color {
-        switch days {
-        case ..<0:  return Theme.secondary    // Renewed
-        case 0:     return Theme.destructive   // Renews today
-        case 1...7: return Theme.warning       // Renews in N days
-        default:    return Theme.secondary     // future date
-        }
     }
 }

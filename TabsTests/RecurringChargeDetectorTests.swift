@@ -351,16 +351,20 @@ final class RecurringChargeDetectorTests: XCTestCase {
         ))
     }
 
-    func testDraftsRejectsUnknownMerchantWithVaryingAmounts() {
+    func testDraftsDemotesUnknownMerchantWithVaryingAmounts() {
         // Recurs on a near-monthly rhythm, but every bill differs — groceries,
-        // not a subscription.
+        // not a subscription. It still surfaces (the cadence is too regular to
+        // hide), but deselected and badged so the user makes the call.
         let statement = """
         2026-01-05 SUNNYVALE SPICE BAZAAR 42.17
         2026-02-04 SUNNYVALE SPICE BAZAAR 58.90
         2026-03-06 SUNNYVALE SPICE BAZAAR 47.33
         """
 
-        XCTAssertTrue(detector.drafts(from: statement).isEmpty)
+        let drafts = detector.drafts(from: statement)
+        XCTAssertEqual(drafts.count, 1)
+        XCTAssertEqual(drafts.first?.amountsVary, true)
+        XCTAssertEqual(drafts.first?.isSelected, false)
     }
 
     func testDraftsKeepsUnknownMerchantWithExactRegularCharges() throws {
@@ -731,5 +735,46 @@ final class RecurringChargeDetectorTests: XCTestCase {
 
         subscription.cancelledAt = nil
         XCTAssertTrue(subscription.isActive)
+    }
+
+    // MARK: - Amounts-vary near misses
+
+    func testVaryingAmountsWithRegularCadenceEmitDeselectedCandidate() {
+        // Gas-station pattern: same merchant every month, different totals.
+        // Not a subscription by the strict gate, but close enough that the
+        // review screen should show it deselected for the user to judge.
+        let text = """
+        03/15 SHELL OIL 57444 MOUNTAIN VIEW CA $38.10
+        04/15 SHELL OIL 57444 MOUNTAIN VIEW CA $51.72
+        05/15 SHELL OIL 57444 MOUNTAIN VIEW CA $42.13
+        """
+        let drafts = detector.drafts(from: text)
+        let shell = drafts.first { $0.name.localizedCaseInsensitiveContains("shell") }
+        XCTAssertNotNil(shell, "regular-cadence varying-amount merchant should surface as a candidate")
+        XCTAssertEqual(shell?.amountsVary, true)
+        XCTAssertEqual(shell?.isSelected, false)
+    }
+
+    func testIrregularSpendingIsStillDropped() {
+        // Varying amounts AND irregular gaps — ordinary shopping stays hidden.
+        let text = """
+        03/02 SOME BODEGA NYC $12.10
+        03/05 SOME BODEGA NYC $31.72
+        03/21 SOME BODEGA NYC $4.13
+        """
+        let drafts = detector.drafts(from: text)
+        XCTAssertFalse(drafts.contains { $0.name.localizedCaseInsensitiveContains("bodega") })
+    }
+
+    func testStableAmountsAreNotFlaggedAsVarying() {
+        let text = """
+        03/05 SPOTIFY USA $11.99
+        04/05 SPOTIFY USA $11.99
+        05/05 SPOTIFY USA $11.99
+        """
+        let drafts = detector.drafts(from: text)
+        let spotify = drafts.first { $0.name.localizedCaseInsensitiveContains("spotify") }
+        XCTAssertEqual(spotify?.amountsVary, false)
+        XCTAssertEqual(spotify?.isSelected, true)
     }
 }

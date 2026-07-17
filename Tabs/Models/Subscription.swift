@@ -62,6 +62,11 @@ final class Subscription {
     /// removes them for good. Optional so existing stores migrate cleanly.
     var deletedAt: Date?
 
+    /// How many days before `renewalDate` the local reminder fires. Persisted
+    /// per subscription so each one can have its own lead time; defaults to 3
+    /// (the previous app-wide behavior) so existing stores migrate unchanged.
+    var reminderDaysBefore: Int = 3
+
     init(
         id: UUID = UUID(),
         name: String,
@@ -74,7 +79,8 @@ final class Subscription {
         currencyCode: String? = nil,
         charges: [ChargeRecord] = [],
         cancelledAt: Date? = nil,
-        deletedAt: Date? = nil
+        deletedAt: Date? = nil,
+        reminderDaysBefore: Int = 3
     ) {
         self.id = id
         self.name = name
@@ -88,6 +94,7 @@ final class Subscription {
         self.charges = charges
         self.cancelledAt = cancelledAt
         self.deletedAt = deletedAt
+        self.reminderDaysBefore = reminderDaysBefore
     }
 
     /// Whether this subscription is live and counted: not cancelled, not

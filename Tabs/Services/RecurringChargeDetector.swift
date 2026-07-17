@@ -62,7 +62,17 @@ struct RecurringChargeDetector {
             guard let group = groups[key] else { return [] }
 
             return Self.amountClusters(in: dedupe(group)).compactMap { cluster in
-                guard isLikelySubscription(cluster) else { return nil }
+                // A cluster is either a likely subscription (selected draft), a
+                // recurring-but-varying near miss (deselected, badged draft for
+                // the user to judge), or noise (dropped).
+                let amountsVary: Bool
+                if isLikelySubscription(cluster) {
+                    amountsVary = false
+                } else if isRecurringButVarying(cluster) {
+                    amountsVary = true
+                } else {
+                    return nil
+                }
 
                 let transactions = cluster
                     .map { ScannedTransaction(amount: $0.amount, date: $0.date, rawLine: $0.rawLine, currencyCode: $0.currencyCode) }
@@ -81,7 +91,9 @@ struct RecurringChargeDetector {
                     billingCycle: cycle,
                     currencyCode: Self.dominantCurrency(in: cluster),
                     renewalDate: renewalDate,
-                    transactions: transactions
+                    isSelected: !amountsVary,
+                    transactions: transactions,
+                    amountsVary: amountsVary
                 )
             }
         }
@@ -177,9 +189,29 @@ struct RecurringChargeDetector {
         guard cluster.count >= 3, days.count >= 3 else { return false }
 
         // Subscriptions bill an exact price; meals and groceries don't.
-        let amounts = cluster.map(\.amount)
-        guard let lo = amounts.min(), let hi = amounts.max(),
-              hi - lo <= max(lo * Decimal(0.1), 1)
+        guard Self.amountsAreStable(cluster.map(\.amount)) else { return false }
+
+        return Self.inferredCycle(fromDates: Array(days)) != nil
+            && Self.gapsAreRegular(days: Array(days))
+    }
+
+    /// Whether a cluster's amounts are tight enough to be one billed price:
+    /// max spread within 10% of the low amount (or $1 for small prices).
+    private static func amountsAreStable(_ amounts: [Decimal]) -> Bool {
+        guard let lo = amounts.min(), let hi = amounts.max() else { return false }
+        return hi - lo <= max(lo * Decimal(0.1), 1)
+    }
+
+    /// The near miss worth surfacing: an unknown merchant that charges on a
+    /// *regular, recognizable cadence* but with *varying amounts* — a monthly
+    /// gas fill-up, not Netflix. Fails `isLikelySubscription` only on the
+    /// amount-stability leg, so the review screen shows it deselected with an
+    /// "Amounts vary" badge instead of hiding it entirely. Catalog brands and
+    /// hinted lines never take this path (they already pass outright).
+    private func isRecurringButVarying(_ cluster: [Charge]) -> Bool {
+        let days = Set(cluster.compactMap { $0.date.map { Calendar.current.startOfDay(for: $0) } })
+        guard cluster.count >= 3, days.count >= 3,
+              !Self.amountsAreStable(cluster.map(\.amount))
         else { return false }
 
         return Self.inferredCycle(fromDates: Array(days)) != nil

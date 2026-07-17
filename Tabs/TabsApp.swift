@@ -51,16 +51,22 @@ struct TabsApp: App {
             }
         }
 
+        // Mirrors the design handoff's home screen: five active rows (Netflix
+        // inside the ≤3-day accent window) plus one cancelled.
         let samples = [
-            Subscription(name: "Netflix", price: 15.49, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 2), source: "bank statements", currencyCode: "USD",
-                         charges: monthly(15.49, "03/02 NETFLIX.COM  $15.49", months: 3)),
-            Subscription(name: "Spotify", price: 11.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 6), source: "bank statements", currencyCode: "USD",
+            Subscription(name: "Netflix", price: 15.49, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 3), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(15.49, "03/15 NETFLIX.COM CA  $15.49", months: 4)),
+            Subscription(name: "Spotify", price: 11.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 5), source: "bank statements", currencyCode: "USD",
                          charges: monthly(11.99, "03/05 SPOTIFY USA  $11.99", months: 3)),
-            Subscription(name: "iCloud+", price: 2.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 13), source: "bank statements", currencyCode: "USD",
+            Subscription(name: "iCloud+", price: 2.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 11), source: "bank statements", currencyCode: "USD",
                          charges: monthly(2.99, "03/12 ICLOUD+ APPLE.COM/BILL  $2.99", months: 3)),
-            Subscription(name: "Amazon Prime", price: 139, billingCycle: .yearly, renewalDate: .now.addingTimeInterval(day * 40), source: "bank statements", currencyCode: "USD",
-                         charges: [ChargeRecord(amount: 139, date: .now.addingTimeInterval(-day * 325), rawLine: "03/15 AMAZON PRIME*T45830NQ3 AMZN.COM/BILL  $139.00", currencyCode: "USD")]),
-            Subscription(name: "Adobe Creative Cloud", price: 59.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 20), source: "bank statements", currencyCode: "USD", cancelledAt: .now.addingTimeInterval(-day * 3)),
+            Subscription(name: "Disney+", price: 13.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 16), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(13.99, "03/25 DISNEY PLUS  $13.99", months: 3)),
+            Subscription(name: "Notion", price: 8.00, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(day * 19), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(8.00, "03/28 NOTION LABS  $8.00", months: 3)),
+            Subscription(name: "Hulu", price: 17.99, billingCycle: .monthly, renewalDate: .now.addingTimeInterval(-day * 30), source: "bank statements", currencyCode: "USD",
+                         charges: monthly(17.99, "03/08 HULU 877-8244808  $17.99", months: 2),
+                         cancelledAt: .now.addingTimeInterval(-day * 34)),
         ]
         samples.forEach { context.insert($0) }
     }

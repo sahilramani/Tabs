@@ -71,9 +71,14 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
     var transactions: [ScannedTransaction] = []
 
     /// Set by the review screen when a saved subscription with the same
-    /// merchant key already exists — shown as a badge and deselected by
-    /// default so re-importing a statement doesn't create duplicates.
+    /// merchant key already exists — shown as a badge; saving updates the
+    /// existing record in place instead of duplicating it.
     var isAlreadyTracked: Bool = false
+
+    /// Set by the detector when this merchant recurs on a regular cadence but
+    /// with varying amounts (gas stations, restaurants) — probably not a
+    /// subscription, so it arrives deselected and badged for the user to judge.
+    var amountsVary: Bool = false
 
     init(
         name: String,
@@ -82,7 +87,8 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
         currencyCode: String? = nil,
         renewalDate: Date? = nil,
         isSelected: Bool = true,
-        transactions: [ScannedTransaction] = []
+        transactions: [ScannedTransaction] = [],
+        amountsVary: Bool = false
     ) {
         self.name = name
         self.price = price
@@ -91,6 +97,7 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
         self.renewalDate = renewalDate ?? billingCycle.nextRenewalDate(from: Date())
         self.isSelected = isSelected
         self.transactions = transactions
+        self.amountsVary = amountsVary
     }
 
     /// Switches to `cycle` and recomputes `renewalDate` to match: one cycle
