@@ -10,13 +10,15 @@
 
 **Branch:** `feature/app-screens-redesign` off `main`. Commit after each task.
 
-**Design references:** `scratchpad/handoff/design_handoff_app_screens/` — README.md + screenshots (home.png, import.png, review.png, detail.png). Colors are existing `Theme` tokens (AccentPrimary dark = #30D158 already matches the handoff).
+**Status:** Shipped — squash-merged to `main` as #12 on 2026-07-16; the branch is deleted. Kept as a record of how the redesign was scoped.
+
+**Design references:** `design/` — `app-screens-handoff.md` + `design/screenshots/` (home.png, import.png, review.png, detail.png). Colors are existing `Theme` tokens (AccentPrimary dark = #30D158 already matches the handoff).
 
 ---
 
 ### Task 0: Branch
 
-- [ ] `git -C /Users/sahilramani/dev/Tabs checkout -b feature/app-screens-redesign`
+- [x] `git -C /Users/sahilramani/dev/Tabs checkout -b feature/app-screens-redesign`
 
 ### Task 1: Per-subscription reminder offset
 
@@ -27,7 +29,7 @@ The detail screen's "Reminder — 3 days before" row needs a persisted, per-subs
 - Modify: `Tabs/Services/NotificationManager.swift`
 - Test: `TabsTests/SubscriptionReminderTests.swift` (create)
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 //
@@ -79,8 +81,8 @@ final class SubscriptionReminderTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Run tests, verify they fail** (`reminderDaysBefore`/`fireDate` don't exist — build error is the failure)
-- [ ] **Step 3: Implement**
+- [x] **Step 2: Run tests, verify they fail** (`reminderDaysBefore`/`fireDate` don't exist — build error is the failure)
+- [x] **Step 3: Implement**
 
 `Subscription.swift` — add stored property after `deletedAt` + init param (default keeps SwiftData migration clean):
 
@@ -108,8 +110,8 @@ In `scheduleRenewalReminder`, replace the fireDate block with:
         let triggerDate = Self.fireDate(for: subscription.renewalDate, daysBefore: subscription.reminderDaysBefore)
 ```
 
-- [ ] **Step 4: Run tests, verify pass**
-- [ ] **Step 5: Commit** `feat: per-subscription reminder lead time`
+- [x] **Step 4: Run tests, verify pass**
+- [x] **Step 5: Commit** `feat: per-subscription reminder lead time`
 
 ### Task 2: Detector emits "amounts vary" near-miss candidates
 
@@ -120,7 +122,7 @@ Review screen shows Shell Oil as a deselected card with a gray "Amounts vary —
 - Modify: `Tabs/Services/RecurringChargeDetector.swift`
 - Test: `TabsTests/RecurringChargeDetectorTests.swift`
 
-- [ ] **Step 1: Failing tests** (append to existing XCTestCase)
+- [x] **Step 1: Failing tests** (append to existing XCTestCase)
 
 ```swift
     // MARK: - Amounts-vary near misses
@@ -162,8 +164,8 @@ Review screen shows Shell Oil as a deselected card with a gray "Amounts vary —
     }
 ```
 
-- [ ] **Step 2: Run, verify fail**
-- [ ] **Step 3: Implement**
+- [x] **Step 2: Run, verify fail**
+- [x] **Step 3: Implement**
 
 `ScannedSubscriptionDraft.swift` — add after `isAlreadyTracked`:
 
@@ -181,8 +183,8 @@ Review screen shows Shell Oil as a deselected card with a gray "Amounts vary —
 - Add `private func isRecurringButVarying(_ cluster: [Charge]) -> Bool`: unknown/unhinted cluster, ≥3 charges on ≥3 distinct days, `!amountsAreStable`, `inferredCycle != nil`, `gapsAreRegular`.
 - In `drafts(from:)`'s cluster loop, when `isLikelySubscription` fails but `isRecurringButVarying` passes, build the draft with `isSelected: false, amountsVary: true`.
 
-- [ ] **Step 4: Run all detector tests, verify pass**
-- [ ] **Step 5: Commit** `feat: surface recurring-but-varying charges as deselected candidates`
+- [x] **Step 4: Run all detector tests, verify pass**
+- [x] **Step 5: Commit** `feat: surface recurring-but-varying charges as deselected candidates`
 
 ### Task 3: Scanner reports statement count (ScanBatch)
 
@@ -193,7 +195,7 @@ Review caption: "4 candidates · from 3 statements, Mar–Jun". Scanner must rep
 - Modify: `Tabs/Views/ContentView.swift` (call sites + DraftsBox)
 - Test: none (I/O plumbing; covered by build + e2e)
 
-- [ ] **Step 1: Implement**
+- [x] **Step 1: Implement**
 
 `LocalStatementScannerService.swift` — add above the service:
 
@@ -214,8 +216,8 @@ struct ScanBatch {
 
 `ContentView.swift` — `runScan`'s `work` closure returns `ScanBatch`; `DraftsBox` gains `let batch: ScanBatch`-style fields (drafts, statementCount, sourceNoun); `--seed-review` builds `DraftsBox(drafts: demo, statementCount: 3, sourceNoun: "statement", source: "bank statements")`. `ScanReviewView` init gains `statementCount`/`sourceNoun` (Task 6 consumes them).
 
-- [ ] **Step 2: Build, verify compiles + all tests pass**
-- [ ] **Step 3: Commit** `feat: scanner reports how many statements fed a scan`
+- [x] **Step 2: Build, verify compiles + all tests pass**
+- [x] **Step 3: Commit** `feat: scanner reports how many statements fed a scan`
 
 ### Task 4: Review caption + date-window helper (TDD)
 
@@ -223,7 +225,7 @@ struct ScanBatch {
 - Create: `Tabs/Models/ReviewCaption.swift`
 - Test: `TabsTests/ReviewCaptionTests.swift` (create)
 
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
 
 ```swift
 import XCTest
@@ -268,10 +270,10 @@ final class ReviewCaptionTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Run, verify fail**
-- [ ] **Step 3: Implement `ReviewCaption.text(candidateCount:statementCount:sourceNoun:chargeDates:calendar:)`** — pure string builder: pluralize "candidate"/noun with a trailing "s"; window from min/max charge dates, abbreviated month names, en dash, same-month collapses to one label, different years append the year to both ends.
-- [ ] **Step 4: Run, verify pass**
-- [ ] **Step 5: Commit** `feat: review-screen caption builder`
+- [x] **Step 2: Run, verify fail**
+- [x] **Step 3: Implement `ReviewCaption.text(candidateCount:statementCount:sourceNoun:chargeDates:calendar:)`** — pure string builder: pluralize "candidate"/noun with a trailing "s"; window from min/max charge dates, abbreviated month names, en dash, same-month collapses to one label, different years append the year to both ends.
+- [x] **Step 4: Run, verify pass**
+- [x] **Step 5: Commit** `feat: review-screen caption builder`
 
 ### Task 5: Home screen redesign
 
@@ -288,9 +290,9 @@ Changes (per home.png):
 - Import flow state: `isShowingImportSheet`, `pendingImportAction: ImportAction?`, `.photosPicker(isPresented:selection:)`, `isShowingPDFPicker`, `isShowingFolderPicker`. Sheet `onDismiss` fires the pending action (Task 7 wires the sheet itself; this task can land with the button presenting a placeholder `ImportSheetView()` if Task 7 is done first — do Task 7 before this if executing out of order; otherwise land both before building).
 - Keep: drag-drop, scanning overlay, error alert, reminders banner, `--seed-review`/`--seed-demo`, swipe actions, rollOverdueRenewals.
 
-- [ ] **Step 1: Implement** (full code in-task during execution; this is a view-layer task verified by build + screenshot)
-- [ ] **Step 2: Build for iOS Simulator, verify compiles; run unit tests**
-- [ ] **Step 3: Commit** `feat: redesigned home screen (spend header, active/cancelled sections, floating add)`
+- [x] **Step 1: Implement** (full code in-task during execution; this is a view-layer task verified by build + screenshot)
+- [x] **Step 2: Build for iOS Simulator, verify compiles; run unit tests**
+- [x] **Step 3: Commit** `feat: redesigned home screen (spend header, active/cancelled sections, floating add)`
 
 ### Task 6: Import sheet (new view)
 
@@ -310,9 +312,9 @@ Per import.png:
 - Footer: `lock` + "Everything is read locally. Nothing leaves this iPhone." 12.5 tertiary, centered.
 - Emits `ImportAction` enum (`scanScreenshot`, `importPDF`, `importFolder`, `addManually`) via closure; row tap sets action + dismisses; ContentView's `onDismiss` presents the matching picker (photosPicker / PDF picker `[.pdf]` / folder picker `[.folder]`, Catalyst folder → `chooseFoldersViaOpenPanel`) or the manual-add sheet.
 
-- [ ] **Step 1: Implement**
-- [ ] **Step 2: Build + tests pass**
-- [ ] **Step 3: Commit** `feat: import sheet with four on-device import paths`
+- [x] **Step 1: Implement**
+- [x] **Step 2: Build + tests pass**
+- [x] **Step 3: Commit** `feat: import sheet with four on-device import paths`
 
 ### Task 7: Review screen redesign
 
@@ -328,9 +330,9 @@ Per review.png:
 - Bottom pinned save: full-width 54pt capsule, accent fill, black 17/700 label `Save N subscription(s)`, disabled at 0, 20pt margins. Keep existing save/plan logic untouched.
 - Empty state unchanged.
 
-- [ ] **Step 1: Implement**
-- [ ] **Step 2: Build + all tests pass (existing plan/dedupe tests must stay green)**
-- [ ] **Step 3: Commit** `feat: redesigned review screen (cards, chips, evidence, pinned save)`
+- [x] **Step 1: Implement**
+- [x] **Step 2: Build + all tests pass (existing plan/dedupe tests must stay green)**
+- [x] **Step 3: Commit** `feat: redesigned review screen (cards, chips, evidence, pinned save)`
 
 ### Task 8: Detail screen redesign
 
@@ -347,9 +349,9 @@ Per detail.png:
 - Footnote centered 12.5 tertiary: "Cancelling keeps the history and stops the reminder. Everything stays on this iPhone." + provenance line below.
 - Keep: `BillingSnapshot` reschedule-on-exit logic (extend snapshot with `reminderDaysBefore`), cancel/restore/trash flows, `NotificationManager` calls.
 
-- [ ] **Step 1: Implement**
-- [ ] **Step 2: Build + tests**
-- [ ] **Step 3: Commit** `feat: redesigned subscription detail (header, editable rows, reminder, evidence)`
+- [x] **Step 1: Implement**
+- [x] **Step 2: Build + tests**
+- [x] **Step 3: Commit** `feat: redesigned subscription detail (header, editable rows, reminder, evidence)`
 
 ### Task 9: Demo seed parity + CHANGELOG
 
@@ -358,16 +360,16 @@ Per detail.png:
 - Modify: `Tabs/Views/ContentView.swift` (`--seed-review` demo drafts: Netflix 4 charges, Adobe Creative Cloud $22.99 3 charges, Spotify duplicate, Shell Oil amountsVary — mirroring review.png)
 - Modify: `CHANGELOG.md` (Unreleased → Changed: the four redesigned screens; Added: per-subscription reminder lead time, amounts-vary candidates)
 
-- [ ] **Step 1: Implement, build, tests**
-- [ ] **Step 2: Commit** `chore: demo seeds mirror design handoff; changelog`
+- [x] **Step 1: Implement, build, tests**
+- [x] **Step 2: Commit** `chore: demo seeds mirror design handoff; changelog`
 
 ### Task 10: End-to-end verification
 
-- [ ] Build: `xcodebuild -project Tabs.xcodeproj -scheme Tabs -destination 'platform=iOS Simulator,name=<newest iPhone>' build`
-- [ ] Tests: `xcodebuild test` same destination — all green
-- [ ] Boot simulator (dark mode), launch with `--seed-demo`, screenshot home; launch with `--seed-review`, screenshot review; navigate detail + import sheet via simctl/UI where feasible; compare against `screenshots/*.png`
-- [ ] Fix discrepancies, re-screenshot
-- [ ] Final commit
+- [x] Build: `xcodebuild -project Tabs.xcodeproj -scheme Tabs -destination 'platform=iOS Simulator,name=<newest iPhone>' build`
+- [x] Tests: `xcodebuild test` same destination — all green
+- [x] Boot simulator (dark mode), launch with `--seed-demo`, screenshot home; launch with `--seed-review`, screenshot review; navigate detail + import sheet via simctl/UI where feasible; compare against `screenshots/*.png`
+- [x] Fix discrepancies, re-screenshot
+- [x] Final commit
 
 ## Self-Review
 
