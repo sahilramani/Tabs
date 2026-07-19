@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #070A08; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { text-decoration: none; }
+  </style>
+</helmet>
+
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F3F6F4; background:
+      radial-gradient(1100px 700px at 12% -14%, rgba(48,209,88,0.14), transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, rgba(31,166,76,0.10), transparent 56%),
+      #070A08;
+  background-attachment: fixed; min-height: 100vh; line-height: 1.6; position: relative; overflow-x: hidden;">
+
+  <div aria-hidden="true" style="position: fixed; inset: 0; pointer-events: none; opacity: 0.5; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 28px 28px; mask-image: radial-gradient(1000px 1000px at 50% 0%, #000 0%, transparent 75%); -webkit-mask-image: radial-gradient(1000px 1000px at 50% 0%, #000 0%, transparent 75%);"></div>
+
+  <!-- ============ NAV ============ -->
+  <header style="position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); background: rgba(7,10,8,0.72); border-bottom: 1px solid rgba(255,255,255,0.07);">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 14px;">
+      <a href="index.html" style="display: flex; align-items: center; gap: 11px;">
+        <img src="branding/logo-512.png" alt="Tabs" width="30" height="30" style="border-radius: 8px; box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 4px 14px rgba(48,209,88,0.25); display: block;">
+        <span style="font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #F3F6F4;">Tabs</span>
+      </a>
+      <div style="flex: 1;"></div>
+      <nav style="display: flex; align-items: center; gap: 4px;">
+        <a href="index.html" style="color: #9AA8A0; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 9px;" style-hover="color: #F3F6F4; background: rgba(255,255,255,0.05);">Overview</a>
+        <a href="getting-started.html" style="color: #9AA8A0; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 9px;" style-hover="color: #F3F6F4; background: rgba(255,255,255,0.05);">Getting started</a>
+        <a href="usage.html" style="color: #9AA8A0; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 9px;" style-hover="color: #F3F6F4; background: rgba(255,255,255,0.05);">Usage</a>
+        <a href="contact.html" style="color: #F3F6F4; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 9px;">Contact</a>
+        <a href="https://github.com/sahilramani/Tabs" style="margin-left: 8px; display: inline-flex; align-items: center; gap: 7px; background: #30D158; color: #04140A; font-size: 13.5px; font-weight: 700; padding: 8px 15px; border-radius: 980px;" style-hover="background: #D9FFE4;">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="#04140A" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1080px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1;">
+
+    <!-- ============ PAGE HEAD ============ -->
+    <section style="padding: 72px 0 40px; max-width: 680px;">
+      <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; color: #30D158; text-transform: uppercase; margin-bottom: 16px;">// Contact</div>
+      <h1 style="margin: 0 0 16px; font-size: clamp(36px, 6vw, 56px); line-height: 1.04; letter-spacing: -0.03em; font-weight: 800;">Let's talk on GitHub.</h1>
+      <p style="font-size: clamp(17px, 2.2vw, 20px); color: #9AA8A0; margin: 0; text-wrap: pretty;">Tabs is open source and developed in the open. Bugs, ideas, and questions all live on GitHub — where the conversation stays public and searchable for everyone.</p>
+    </section>
+
+    <!-- ============ CONTACT CARDS ============ -->
+    <section style="padding: 8px 0 24px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+
+        <a href="https://github.com/sahilramani/Tabs/issues/new" style="display: block; color: #F3F6F4; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);" style-hover="border-color: rgba(48,209,88,0.45); background: rgba(48,209,88,0.05);">
+          <div style="width: 46px; height: 46px; border-radius: 13px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.22); display: grid; place-items: center; margin-bottom: 18px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg></div>
+          <h2 style="margin: 0 0 7px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em;">Report a bug</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 14.5px; line-height: 1.6;">Something not detecting right, a crash, a layout glitch? Open an issue with your steps and what you expected — the more detail, the faster the fix.</p>
+          <span style="display: inline-flex; align-items: center; gap: 7px; color: #30D158; font-size: 14px; font-weight: 600;">Open an issue <span style="font-size: 16px;">↗</span></span>
+        </a>
+
+        <a href="https://github.com/sahilramani/Tabs/discussions" style="display: block; color: #F3F6F4; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);" style-hover="border-color: rgba(48,209,88,0.45); background: rgba(48,209,88,0.05);">
+          <div style="width: 46px; height: 46px; border-radius: 13px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.22); display: grid; place-items: center; margin-bottom: 18px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-9 8.4 9 9 0 0 1-4-1L3 20l1.1-4A8.38 8.38 0 0 1 3 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5z"/></svg></div>
+          <h2 style="margin: 0 0 7px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em;">Ask a question</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 14.5px; line-height: 1.6;">Not sure how something works, or want to talk through an approach? Start a thread in Discussions — questions, ideas, and show-and-tell all welcome.</p>
+          <span style="display: inline-flex; align-items: center; gap: 7px; color: #30D158; font-size: 14px; font-weight: 600;">Open Discussions <span style="font-size: 16px;">↗</span></span>
+        </a>
+
+        <a href="https://github.com/sahilramani/Tabs/issues/new" style="display: block; color: #F3F6F4; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);" style-hover="border-color: rgba(48,209,88,0.45); background: rgba(48,209,88,0.05);">
+          <div style="width: 46px; height: 46px; border-radius: 13px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.22); display: grid; place-items: center; margin-bottom: 18px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></div>
+          <h2 style="margin: 0 0 7px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em;">Request a feature</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 14.5px; line-height: 1.6;">Have an idea — a brand that isn't detected, a cycle Tabs should infer, an export you want? File it as an issue describing the problem you're trying to solve.</p>
+          <span style="display: inline-flex; align-items: center; gap: 7px; color: #30D158; font-size: 14px; font-weight: 600;">Suggest a feature <span style="font-size: 16px;">↗</span></span>
+        </a>
+
+        <a href="https://github.com/sahilramani/Tabs/blob/main/CONTRIBUTING.md" style="display: block; color: #F3F6F4; background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);" style-hover="border-color: rgba(48,209,88,0.45); background: rgba(48,209,88,0.05);">
+          <div style="width: 46px; height: 46px; border-radius: 13px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.22); display: grid; place-items: center; margin-bottom: 18px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a6 6 0 0 1-6 6H9"/></svg></div>
+          <h2 style="margin: 0 0 7px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em;">Contribute code</h2>
+          <p style="margin: 0 0 16px; color: #9AA8A0; font-size: 14.5px; line-height: 1.6;">Adding a brand to the detector is a one-line change, and there's room for much more. Read the contributing guide, then open a pull request.</p>
+          <span style="display: inline-flex; align-items: center; gap: 7px; color: #30D158; font-size: 14px; font-weight: 600;">Read CONTRIBUTING.md <span style="font-size: 16px;">↗</span></span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ============ PRIVACY NOTE ============ -->
+    <section style="padding: 32px 0 8px;">
+      <div style="background: radial-gradient(600px 300px at 0% 0%, rgba(48,209,88,0.10), transparent 62%), linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid rgba(48,209,88,0.22); border-radius: 22px; padding: 32px 34px; display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+        <div style="width: 48px; height: 48px; flex: none; border-radius: 13px; background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.24); display: grid; place-items: center;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <div style="flex: 1; min-width: 260px;">
+          <h2 style="margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">Reporting safely</h2>
+          <p style="margin: 0; color: #9AA8A0; font-size: 15px; line-height: 1.65; max-width: 640px;">Tabs collects nothing, so there's no account data to worry about. When you file an issue, please <strong style="color: #F3F6F4;">never attach a real bank statement or screenshot with personal financial details</strong> — redact amounts and account numbers, or recreate the problem with the sample statements in the repo. Public issues are visible to everyone.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESPONSE EXPECTATION ============ -->
+    <section style="padding: 40px 0 8px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 22px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #69766E; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Maintained by</div>
+          <p style="margin: 0; font-size: 15px; color: #F3F6F4; font-weight: 600;">@sahilramani</p>
+          <p style="margin: 4px 0 0; color: #9AA8A0; font-size: 13.5px;">and the open-source community</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 22px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #69766E; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Best for</div>
+          <p style="margin: 0; font-size: 15px; color: #F3F6F4; font-weight: 600;">Public, searchable threads</p>
+          <p style="margin: 4px 0 0; color: #9AA8A0; font-size: 13.5px;">so answers help the next person too</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 22px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #69766E; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Response</div>
+          <p style="margin: 0; font-size: 15px; color: #F3F6F4; font-weight: 600;">As time allows</p>
+          <p style="margin: 4px 0 0; color: #9AA8A0; font-size: 13.5px;">it's a labor of love, not a SLA</p>
+        </div>
+      </div>
+    </section>
+
+    <div style="height: 56px;"></div>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="border-top: 1px solid rgba(255,255,255,0.07); margin-top: 24px; position: relative; z-index: 1;">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 44px 28px 56px; display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;">
+      <div style="max-width: 320px;">
+        <div style="display: flex; align-items: center; gap: 11px; margin-bottom: 12px;">
+          <img src="branding/logo-512.png" alt="Tabs" width="28" height="28" style="border-radius: 7px;">
+          <span style="font-weight: 700; font-size: 16px; letter-spacing: -0.02em;">Tabs</span>
+        </div>
+        <p style="margin: 0; color: #69766E; font-size: 13.5px; line-height: 1.6;">A privacy-first, on-device subscription tracker for iOS. Your financial data never leaves your phone.</p>
+      </div>
+      <div style="display: flex; gap: 56px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #69766E; text-transform: uppercase; margin-bottom: 2px;">Pages</div>
+          <a href="index.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Overview</a>
+          <a href="getting-started.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Getting started</a>
+          <a href="usage.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Usage</a>
+          <a href="contact.html" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Contact</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #69766E; text-transform: uppercase; margin-bottom: 2px;">Project</div>
+          <a href="https://github.com/sahilramani/Tabs" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Source on GitHub</a>
+          <a href="https://github.com/sahilramani/Tabs/issues" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Issues</a>
+          <a href="https://github.com/sahilramani/Tabs/blob/main/CONTRIBUTING.md" style="color: #9AA8A0; font-size: 14px;" style-hover="color: #F3F6F4;">Contributing</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width: 1080px; margin: 0 auto; padding: 0 28px 40px;">
+      <p style="margin: 0; color: #4f5a53; font-size: 12.5px; font-family: 'JetBrains Mono', ui-monospace, monospace;">© 2026 Tabs · Open source · github.com/sahilramani/Tabs</p>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+</body>
+</html>

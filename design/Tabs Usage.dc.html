@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Usage — Tabs</title>
-<meta name="description" content="Every Tabs feature, end to end: the home spend summary, importing statements, reviewing detections, managing and cancelling subscriptions, and reminders." />
-<meta property="og:title" content="Usage — Tabs" />
-<meta property="og:description" content="Every Tabs feature, end to end: the home spend summary, importing statements, reviewing detections, managing and cancelling subscriptions, and reminders." />
-<meta property="og:image" content="branding/social-1280x640.png" />
-<meta property="og:type" content="website" />
-<link rel="icon" type="image/png" href="branding/logo-512.png" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -26,8 +24,8 @@
       .usage-row .copy { text-align: left; }
     }
   </style>
-</head>
-<body>
+</helmet>
+
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F3F6F4; background:
       radial-gradient(1100px 700px at 12% -14%, rgba(48,209,88,0.14), transparent 60%),
       radial-gradient(900px 600px at 100% 0%, rgba(31,166,76,0.10), transparent 56%),
@@ -204,17 +202,6 @@
   </footer>
 
 </div>
-<script>
-(function(){
-  function bind(attr){
-    document.querySelectorAll('['+attr+']').forEach(function(el){
-      var hov = el.getAttribute(attr);
-      el.addEventListener('mouseenter', function(){ var b = el.getAttribute('style')||''; el.dataset._b = b; el.setAttribute('style', b + ';' + hov); });
-      el.addEventListener('mouseleave', function(){ if(el.dataset._b !== undefined){ el.setAttribute('style', el.dataset._b); } });
-    });
-  }
-  bind('style-hover');
-})();
-</script>
+</x-dc>
 </body>
 </html>
