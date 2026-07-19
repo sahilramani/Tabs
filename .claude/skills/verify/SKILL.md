@@ -27,7 +27,8 @@ xcrun simctl io $UD screenshot out.png
 - Bundle id is `com.sahilramani.tabs` (lowercase t) — `com.sahilramani.Tabs` fails with FBSOpenApplicationServiceErrorDomain 4.
 - `--seed-demo` only seeds an **empty** store; `simctl uninstall` first for a clean slate.
 - `--seed-review` presents the review sheet with demo drafts (add `--seed-demo` too if you want duplicates flagged). DEBUG builds only.
-- Design reference screenshots live in the app-screens handoff bundle (originally `~/Downloads/Tabs.zip` → `design_handoff_app_screens/screenshots/`).
+- `--seed-import` presents the import sheet; `--seed-detail` pushes the soonest-renewing active subscription (pair it with `--seed-demo` so there is one). DEBUG builds only. Together with the two above, all four core screens can be captured without driving the UI — useful when Simulator control isn't available.
+- Design sources and the app-screens handoff live in `design/`; `design/screenshots/` are the mockups, `docs/screenshots/` the real captures published on the site.
 - Mouse-wheel scroll does nothing in the Simulator — use a click-drag to scroll lists.
 - Saving from the review sheet triggers the notification-permission alert on first run; Allow it or reminders silently no-op.
 

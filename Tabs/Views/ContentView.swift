@@ -52,10 +52,12 @@ struct ContentView: View {
     @State private var reviewItem: DraftsBox?
 
     #if DEBUG
-    /// `--seed-review` fires once per launch. `.task` re-runs whenever this
-    /// view reappears (e.g. popping back from a detail push), which would
-    /// otherwise re-present the demo sheet forever.
-    @State private var hasSeededReview = false
+    /// The `--seed-*` arguments fire once per launch. `.task` re-runs whenever
+    /// this view reappears (e.g. popping back from a detail push), which would
+    /// otherwise re-present the demo screen forever.
+    @State private var hasSeededLaunchScreen = false
+    /// Subscription pushed by `--seed-detail`.
+    @State private var seededDetail: Subscription?
     #endif
 
     // Error alert state.
@@ -177,19 +179,21 @@ struct ContentView: View {
             .sheet(isPresented: $isShowingAbout) {
                 AboutView()
             }
+            #if DEBUG
+            // Programmatic push for `--seed-detail`; the rows themselves use
+            // plain destination-builder links, which can't be driven from code.
+            .navigationDestination(item: $seededDetail) { subscription in
+                SubscriptionDetailView(subscription: subscription)
+            }
+            #endif
             // Keep renewal dates current: roll past-due dates forward by their
             // cycle on launch and whenever the app becomes active again. Also
             // re-check reminder permission (the user may toggle it in Settings).
             .task {
                 #if DEBUG
-                // Present the review sheet with sample drafts for demos and
-                // App Store screenshots, without driving a real import.
-                if !hasSeededReview, reviewItem == nil, CommandLine.arguments.contains("--seed-review") {
-                    hasSeededReview = true
-                    reviewItem = DraftsBox(
-                        drafts: Self.demoReviewDrafts, source: "bank statements",
-                        statementCount: 3, sourceNoun: "statement"
-                    )
+                if !hasSeededLaunchScreen {
+                    hasSeededLaunchScreen = true
+                    seedLaunchScreen()
                 }
                 #endif
                 rollOverdueRenewals()
@@ -688,6 +692,31 @@ struct ContentView: View {
     }
 
     #if DEBUG
+    /// Presents a screen straight from a launch argument, for demos and
+    /// screenshots, without driving a real import:
+    ///
+    /// - `--seed-review` presents the review sheet with sample drafts.
+    /// - `--seed-import` presents the import sheet.
+    /// - `--seed-detail` pushes the soonest-renewing active subscription,
+    ///   so it needs `--seed-demo` (or a real store) to have anything to show.
+    private func seedLaunchScreen() {
+        let arguments = CommandLine.arguments
+        if arguments.contains("--seed-review"), reviewItem == nil {
+            reviewItem = DraftsBox(
+                drafts: Self.demoReviewDrafts, source: "bank statements",
+                statementCount: 3, sourceNoun: "statement"
+            )
+        }
+        if arguments.contains("--seed-import") {
+            isShowingImportSheet = true
+        }
+        if arguments.contains("--seed-detail") {
+            // `subscriptions` is queried sorted by renewal date, so this is the
+            // top row of the Active section.
+            seededDetail = activeSubscriptions.first
+        }
+    }
+
     /// Sample drafts mirroring the design handoff's review screen, used by the
     /// `--seed-review` launch argument for demos and screenshots.
     private static var demoReviewDrafts: [ScannedSubscriptionDraft] {
