@@ -54,6 +54,19 @@ make run           # build, install, and launch on a simulator
 make run SEED=1    # same, but preload demo data
 ```
 
+To land on a specific screen instead of the home list, add `SCREEN=`:
+
+```
+make run SEED=1 SCREEN=import   # the import sheet
+make run SEED=1 SCREEN=review   # the review sheet, with sample detections
+make run SEED=1 SCREEN=detail   # the soonest-renewing subscription's detail
+```
+
+These pass `--seed-import` / `--seed-review` / `--seed-detail`, which are Debug
+only. They present the screen directly rather than driving the UI, which is
+what makes the four core screens reproducible to screenshot. `SCREEN=detail`
+needs `SEED=1` (or a real store) to have a subscription to open.
+
 For shipping a beta to TestFlight, see [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Tests

@@ -23,12 +23,12 @@ help: ## List targets
 test: ## Run the unit test suite on a simulator
 	xcodebuild test -scheme $(SCHEME) -destination "id=$(SIM)"
 
-run: ## Build, install, and launch on a simulator (SEED=1 to load demo data)
+run: ## Build, install, and launch on a simulator (SEED=1 for demo data; SCREEN=import|review|detail to open a screen)
 	xcodebuild build -scheme $(SCHEME) -destination "id=$(SIM)" -derivedDataPath $(DERIVED)
 	-xcrun simctl boot $(SIM) 2>/dev/null
 	open -a Simulator
 	xcrun simctl install $(SIM) "$(APP_SIM)"
-	xcrun simctl launch $(SIM) $(BUNDLE_ID) $(if $(SEED),--seed-demo,)
+	xcrun simctl launch $(SIM) $(BUNDLE_ID) $(if $(SEED),--seed-demo,) $(if $(SCREEN),--seed-$(SCREEN),)
 
 device: ## Build for a connected device (then Run from Xcode, or use devicectl)
 	xcodebuild build -scheme $(SCHEME) -destination 'generic/platform=iOS' \

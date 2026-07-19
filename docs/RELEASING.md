@@ -17,6 +17,14 @@ make run SEED=1    # same, but preload demo subscriptions
 `make run SEED=1` passes `--seed-demo`, which inserts a sample dataset (Debug
 only) so you can exercise the UI without importing a real statement.
 
+Add `SCREEN=import`, `SCREEN=review`, or `SCREEN=detail` to open one of those
+screens on launch instead of the home list — handy for refreshing the
+screenshots in `docs/screenshots/` without tapping through the app:
+
+```sh
+make run SEED=1 SCREEN=import
+```
+
 To test on your own iPhone, plug it in and either Run from Xcode, or:
 
 ```sh
