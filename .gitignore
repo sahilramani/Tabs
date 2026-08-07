@@ -33,3 +33,5 @@ Carthage/Build/
 # Claude Code / skills tooling (local, not project source)
 .agents/
 skills-lock.json
+.claude/settings.local.json
+.claude/worktrees/
