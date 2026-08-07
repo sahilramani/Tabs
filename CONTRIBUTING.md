@@ -67,7 +67,7 @@ only. They present the screen directly rather than driving the UI, which is
 what makes the four core screens reproducible to screenshot. `SCREEN=detail`
 needs `SEED=1` (or a real store) to have a subscription to open.
 
-For shipping a beta to TestFlight, see [docs/RELEASING.md](docs/RELEASING.md).
+For shipping a beta to TestFlight, see [RELEASING.md](RELEASING.md).
 
 ## Tests
 

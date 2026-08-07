@@ -2,7 +2,7 @@
 #
 # Local testing needs nothing but Xcode. Archiving and uploading to TestFlight
 # need a paid Apple Developer account and signing configured in Xcode. See
-# docs/RELEASING.md for the full runbook.
+# RELEASING.md for the full runbook.
 
 SCHEME    := Tabs
 BUNDLE_ID := com.sahilramani.tabs

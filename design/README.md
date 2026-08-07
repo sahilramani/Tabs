@@ -29,3 +29,8 @@ implemented in SwiftUI in `Tabs/Views/`.
 
 `screenshots/` are **design renders, not app captures** — the real captures of
 the shipped app live in `docs/screenshots/`.
+
+The shipped app deliberately diverges from the handoff in places — e.g. the
+handoff's "Delete → confirmation, permanent" is implemented as a restorable
+Trash, which the app already had. Where they disagree, the app is the source
+of truth.

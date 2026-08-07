@@ -3,7 +3,7 @@
 How to test Tabs locally and ship a beta to TestFlight. Local testing needs
 only Xcode. Everything past "Archive" needs a paid Apple Developer account.
 
-All commands are wrapped in the [Makefile](../Makefile) — run `make help` to
+All commands are wrapped in the [Makefile](Makefile) — run `make help` to
 list them.
 
 ## Local testing (no account needed)
@@ -62,7 +62,7 @@ export ASC_ISSUER_ID=<your Issuer ID>
 make beta
 ```
 
-`make beta` archives, exports an `.ipa` via [ExportOptions.plist](../ExportOptions.plist),
+`make beta` archives, exports an `.ipa` via [ExportOptions.plist](ExportOptions.plist),
 and uploads it. The build number is stamped from the current timestamp, so
 every upload is unique without editing the project. Override with
 `make beta BUILD=42` if you want a specific number.
@@ -101,7 +101,7 @@ ships as an **alpha** — the in-app badge and version footer come from
 
 Every release:
 
-1. Move the `Unreleased` notes in [CHANGELOG.md](../CHANGELOG.md) under a new
+1. Move the `Unreleased` notes in [CHANGELOG.md](CHANGELOG.md) under a new
    version heading with today's date.
 2. Bump `MARKETING_VERSION` to match.
 3. Tag the commit: `git tag v0.1.0 && git push --tags`.

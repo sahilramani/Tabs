@@ -1,8 +1,8 @@
-# Tab Bar — geometry recipe for `scripts/make_icon.swift`
+# Tab Bar — icon geometry recipe
 
-Shipped concept (round 5). All values in unit coordinates (`u = side / 1024`).
-The SVG reference (`tabs-icon-tab-bar.svg`, this folder) is y-down; your
-NSGraphicsContext is y-up — flip y as `yCG = 1024 − ySVG − height`. The page
+Shipped concept (round 5), drawn in [`tabs-icon.svg`](tabs-icon.svg) and
+rendered to PNG by [`scripts/make-icon.sh`](../scripts/make-icon.sh). All
+values in unit coordinates (`u = side / 1024`), y-down as in the SVG. The page
 stays inside the frame (no bleed). All shapes are rounded rects — no rotations,
 no paths.
 

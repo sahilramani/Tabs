@@ -18,7 +18,7 @@
 
 ### Task 0: Branch
 
-- [x] `git -C /Users/sahilramani/dev/Tabs checkout -b feature/app-screens-redesign`
+- [x] `git checkout -b feature/app-screens-redesign`
 
 ### Task 1: Per-subscription reminder offset
 

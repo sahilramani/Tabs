@@ -1,6 +1,7 @@
 //
 //  Theme.swift
-//  Tabs — drop-in design-token layer from the Claude Design handoff.
+//  Tabs — drop-in design-token layer from the app-screens design handoff
+//  (design/app-screens-handoff.md).
 //
 //  Compiles on iOS 17+. The semantic colors are backed by named color sets in
 //  Assets.xcassets (generated alongside this file). The accent is "Vital Green"
