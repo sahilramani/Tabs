@@ -111,3 +111,21 @@ sets in `Assets.xcassets`.
 
 The full policy is in [PRIVACY.md](PRIVACY.md); vulnerability reporting is in
 [SECURITY.md](SECURITY.md).
+
+## License
+
+MIT — see [LICENSE](LICENSE). Contributions are covered by
+[CONTRIBUTING.md](CONTRIBUTING.md) and the
+[code of conduct](CODE_OF_CONDUCT.md).
+
+Tabs has no third-party dependencies: it builds against Apple frameworks only
+(SwiftUI, SwiftData, Vision, PDFKit, UserNotifications), bundles no fonts, and
+ships no brand logos — the avatars you see are monograms generated from the
+subscription name.
+
+### Trademarks
+
+Product and service names in this repository — in the detection catalog, the
+sample statement, and the screenshots — are trademarks of their respective
+owners. They appear only to identify the services Tabs detects. Tabs is not
+affiliated with, endorsed by, or sponsored by any of them.

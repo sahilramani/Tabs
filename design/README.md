@@ -1,9 +1,19 @@
 # Design sources
 
 The `.dc.html` files here are the design sources the published pages in `docs/`
-were exported from. They render through `support.js` (a generated runtime — do
-not edit it by hand) and use a `<x-dc>` custom element, so they are not
-directly servable as the site; `docs/` holds the flattened output.
+were exported from. They are kept as a **read-only record of the design**, not
+as something this repo can build.
+
+They are Claude Design exports: a `<x-dc>` custom element driven by a runtime
+(`support.js`) that they each load with a `<script>` tag. That runtime is not
+vendored here — it is third-party generated code that carries no license or
+copyright notice of its own, and this repo's MIT `LICENSE` should not be read
+as covering it. So **the `.dc.html` files will not render as-is**; opening one
+gives a blank page and a 404 for the missing script. Reproducing them needs
+the tool they were authored in.
+
+None of this affects the site. `docs/` holds flattened, self-contained HTML
+with no dependency on any of the above, and that is what GitHub Pages serves.
 
 | Source | Published as |
 |---|---|
@@ -14,12 +24,13 @@ directly servable as the site; `docs/` holds the flattened output.
 | `Tabs App Screens.dc.html` | — (app design reference, not a web page) |
 
 They live outside `docs/` on purpose: `docs/` is the GitHub Pages root, so
-anything in it is published. Keeping the sources here avoids serving a second
-copy of every page plus an unused 54 KB runtime.
+anything in it is published, and these are not pages to serve.
 
-If you change a page, change the source here and re-export to `docs/` so the
-two do not drift. `Tabs Usage.dc.html` resolves `screenshots/` against this
-directory, so it previews standalone against the mockups below.
+**Edit the published HTML in `docs/` directly.** It is plain,
+self-contained HTML — the sources here cannot be re-exported without the
+original tool, so treat them as a snapshot of the design at export time, not
+as the thing you change. Expect them to drift from `docs/` over time; where
+they disagree, `docs/` is what ships.
 
 ## app-screens
 

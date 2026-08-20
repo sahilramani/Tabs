@@ -85,5 +85,5 @@ Avatars: **deterministic monograms, no bundled logos** — 40 pt circle (76 pt o
 No image assets required. All icons are SF Symbols; avatars are generated monograms. Status bar, grabber, and home indicator in the PNGs are system chrome — do not implement.
 
 ## Files
-- `Tabs App Screens.dc.html` — interactive HTML reference, all 4 screens side by side (open in a browser; `support.js` must sit next to it).
+- `Tabs App Screens.dc.html` — interactive HTML reference, all 4 screens side by side. Does not render as-is; see [README.md](README.md). Use the screenshots below instead.
 - `screenshots/home.png · import.png · review.png · detail.png` — 786×1704 (2×) captures, also used on the docs Usage page.
