@@ -93,7 +93,7 @@ Tabs uses [Semantic Versioning](https://semver.org). It is pre-1.0, so it
 ships as an **alpha** — the in-app badge and version footer come from
 `AppInfo.stage`; clear that string when the app reaches a stable release.
 
-- **Marketing version** (`MARKETING_VERSION`, currently `0.1.0`) — the
+- **Marketing version** (`MARKETING_VERSION`, currently `0.2.0`) — the
   user-facing version. Bump it in the target's build settings for a release
   (`0.1.0` → `0.2.0` for new features, `→ 1.0.0` to leave alpha).
 - **Build number** (`CURRENT_PROJECT_VERSION`) — stamped per upload by
@@ -104,7 +104,7 @@ Every release:
 1. Move the `Unreleased` notes in [CHANGELOG.md](CHANGELOG.md) under a new
    version heading with today's date.
 2. Bump `MARKETING_VERSION` to match.
-3. Tag the commit: `git tag v0.1.0 && git push --tags`.
+3. Tag the commit: `git tag vX.Y.Z && git push --tags`.
 4. `make beta`.
 
 ## Notes

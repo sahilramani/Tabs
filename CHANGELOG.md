@@ -9,6 +9,10 @@ heuristics may still change between releases.
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.0] - 2026-08-19
+
 ### Added
 - Per-subscription reminder lead time — each subscription now has its own
   "Reminder" setting (on renewal day up to 7 days before) on the detail screen.
@@ -69,5 +73,6 @@ First alpha.
 - No networking layer, no analytics, no tracking. iCloud sync disabled.
 - App Store privacy manifest declares no data collection.
 
-[Unreleased]: https://github.com/sahilramani/Tabs/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/sahilramani/Tabs/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/sahilramani/Tabs/releases/tag/v0.2.0
 [0.1.0]: https://github.com/sahilramani/Tabs/releases/tag/v0.1.0
