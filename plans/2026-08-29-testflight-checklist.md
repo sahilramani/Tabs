@@ -1,7 +1,7 @@
 # TestFlight checklist — 0.2.0, internal testing
 
 Repo side is done: iPhone-only, portrait-locked, 0.2.0 tagged, signing
-wired to `ASC_TEAM_ID`. Verified in the built binary — `UIDeviceFamily [1]`,
+wired to `ASC_TEAM_ID` (`2U76H9X5Z9`). Verified in the built binary — `UIDeviceFamily [1]`,
 `CFBundleShortVersionString 0.2.0`, `ITSAppUsesNonExemptEncryption false`,
 1024px app icon with no alpha.
 
@@ -10,12 +10,14 @@ so none of this depends on the repo being public.
 
 ## On this Mac
 
-- [ ] **Sign in**: Xcode → *Settings → Accounts* → add the Apple ID now
-      enrolled in the Developer Program.
-- [ ] **Create a distribution certificate**: same screen → *Manage
-      Certificates…* → **+** → **Apple Distribution**. The only certificate
-      currently in the keychain is an *Apple Development* one that expired
-      2026-02-19, and development certs can't sign a TestFlight build.
+- [x] **Sign in** — done. Team `2U76H9X5Z9` (Sahil Ramani) is active, with a
+      valid *Apple Development* certificate (to 2027-06-11) and an Xcode-managed
+      development profile for `com.sahilramani.tabs` covering 2 devices.
+      `make device` produces a correctly signed build.
+- [ ] **Create a distribution certificate**: Xcode → *Settings → Accounts* →
+      *Manage Certificates…* → **+** → **Apple Distribution**. Development certs
+      cannot sign a TestFlight build. `make archive` will also create one
+      automatically via `-allowProvisioningUpdates`.
 
 ## In App Store Connect
 
