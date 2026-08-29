@@ -40,12 +40,29 @@ account it lasts a year.
 ## One-time setup for TestFlight
 
 1. **Enroll** in the Apple Developer Program ($99/yr).
-2. **Signing**: open `Tabs.xcodeproj` → target *Tabs* → *Signing & Capabilities*
-   → check *Automatically manage signing* and pick your Team. (The macOS
-   sandbox entitlements are ignored on iOS; no other capabilities are needed.)
+2. **Signing**: sign in to your Apple account in Xcode (*Settings → Accounts*),
+   then let Xcode create the certificates — *Manage Certificates…* → **+** →
+   *Apple Distribution*. TestFlight needs an **Apple Distribution** certificate;
+   an *Apple Development* one only covers running on your own devices.
+
+   The Team ID is deliberately **not** committed to the project, so contributors
+   aren't pushed onto a team they don't belong to. Signed builds read it from
+   the environment:
+
+   ```sh
+   export ASC_TEAM_ID=<your 10-character Team ID>   # developer.apple.com/account → Membership
+   ```
+
+   `make device`, `make archive`, and `make export` fail with a clear message if
+   it isn't set. If you archive from the Xcode GUI instead, Xcode writes the team
+   into `project.pbxproj` — don't commit that change.
+
+   (The macOS sandbox entitlements in `Tabs/Tabs.entitlements` are inert on iOS;
+   they're kept for a future Mac Catalyst build. No other capabilities needed.)
 3. **App record**: in [App Store Connect](https://appstoreconnect.apple.com) →
    *Apps* → **+** → New App. Platform iOS, bundle id `com.sahilramani.tabs`,
-   name "Tabs".
+   name "Tabs". Tabs ships **iPhone-only** for now
+   (`TARGETED_DEVICE_FAMILY = 1`), so no iPad screenshots are required.
 4. **App Privacy**: in the app record, fill the privacy questionnaire as
    **Data Not Collected** (the app has no networking and collects nothing —
    see `Tabs/PrivacyInfo.xcprivacy`). Required before TestFlight.
@@ -57,6 +74,7 @@ account it lasts a year.
 ## Cutting a beta build
 
 ```sh
+export ASC_TEAM_ID=<your Team ID>
 export ASC_KEY_ID=<your Key ID>
 export ASC_ISSUER_ID=<your Issuer ID>
 make beta
