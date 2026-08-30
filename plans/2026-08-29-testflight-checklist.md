@@ -51,7 +51,7 @@ Builds expire 90 days after upload.
 - [ ] External testers — needs Beta App Review plus a public privacy-policy
       URL, so flip the repo public and enable Pages first
       ([go-public checklist](2026-08-07-go-public-checklist.md)); then point
-      the URL at https://sahilramani.github.io/Tabs/.
+      the URL at https://www.sahilramani.com/Tabs/.
 - [ ] iPad and Mac Catalyst layouts. `TARGETED_DEVICE_FAMILY` and
       `SUPPORTS_MACCATALYST` are the switches; `Tabs/Tabs.entitlements`
       already carries the macOS sandbox keys for when Catalyst returns.
