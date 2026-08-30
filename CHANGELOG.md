@@ -11,6 +11,37 @@ heuristics may still change between releases.
 
 Nothing yet.
 
+## [0.3.0] - 2026-08-30
+
+### Added
+- Sample statements ship with the app — four fictional months from a bank that
+  doesn't exist, readable in full before importing, so the detector can be
+  tried without handing it a real bank statement. Four months because
+  detection needs three sightings of a charge before it will call something
+  recurring; a single statement finds nothing.
+- A privacy policy page at <https://www.sahilramani.com/Tabs/privacy.html>,
+  generated from `PRIVACY.md` so the hosted policy and the one in the
+  repository cannot drift apart. CI fails if they do.
+
+### Changed
+- Scoped to iPhone. iPad and Mac Catalyst are off until those layouts actually
+  exist, rather than shipping a stretched phone layout as tablet support.
+- Locked to portrait. Every screen was designed and captured portrait, and
+  rotating only stretched them.
+- Signed builds read the Apple Developer Team ID from `ASC_TEAM_ID` instead of
+  carrying it in the committed project, so contributors aren't pushed onto a
+  team they don't belong to. `make device`, `make archive`, and `make export`
+  now fail with a readable message when it isn't set.
+- `samples/` generates the whole four-month set; the single-month fixture it
+  replaces could not produce a detection at all.
+
+### Fixed
+- Social share cards. `og:image` pointed at the `github.io` address, which only
+  redirects to the site's real domain, and scrapers generally don't follow
+  redirects for images.
+- The site now enforces HTTPS. The custom domain had an approved certificate,
+  but enforcement was off, so `http://` was answered as-is.
+
 ## [0.2.0] - 2026-08-19
 
 ### Added
@@ -73,6 +104,7 @@ First alpha.
 - No networking layer, no analytics, no tracking. iCloud sync disabled.
 - App Store privacy manifest declares no data collection.
 
-[Unreleased]: https://github.com/sahilramani/Tabs/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/sahilramani/Tabs/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/sahilramani/Tabs/releases/tag/v0.3.0
 [0.2.0]: https://github.com/sahilramani/Tabs/releases/tag/v0.2.0
 [0.1.0]: https://github.com/sahilramani/Tabs/releases/tag/v0.1.0

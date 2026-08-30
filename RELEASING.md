@@ -111,7 +111,7 @@ Tabs uses [Semantic Versioning](https://semver.org). It is pre-1.0, so it
 ships as an **alpha** — the in-app badge and version footer come from
 `AppInfo.stage`; clear that string when the app reaches a stable release.
 
-- **Marketing version** (`MARKETING_VERSION`, currently `0.2.0`) — the
+- **Marketing version** (`MARKETING_VERSION`, currently `0.3.0`) — the
   user-facing version. Bump it in the target's build settings for a release
   (`0.1.0` → `0.2.0` for new features, `→ 1.0.0` to leave alpha).
 - **Build number** (`CURRENT_PROJECT_VERSION`) — stamped per upload by
