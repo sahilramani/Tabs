@@ -23,8 +23,10 @@ with no dependency on any of the above, and that is what GitHub Pages serves.
 | `Tabs Contact.dc.html` | `docs/contact.html` |
 | `Tabs App Screens.dc.html` | — (app design reference, not a web page) |
 
-`docs/privacy.html` has no source here — it was hand-authored from the
-contact page's markup, so edit that file directly.
+`docs/privacy.html` has no source here and is not hand-edited either: it is
+generated from `PRIVACY.md` by `scripts/build-privacy-page.py`, which lifts
+the page chrome from `docs/contact.html`. Edit the Markdown and re-run it.
+CI fails if the two fall out of step.
 
 They live outside `docs/` on purpose: `docs/` is the GitHub Pages root, so
 anything in it is published, and these are not pages to serve.

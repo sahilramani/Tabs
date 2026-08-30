@@ -16,6 +16,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  docs:
+    name: Docs in sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # docs/privacy.html is generated from PRIVACY.md; editing one without
+      # rebuilding the other would publish a policy that no longer matches
+      # the one in the repository.
+      - name: Privacy page matches PRIVACY.md
+        run: ./scripts/build-privacy-page.py --check
+
   build:
     name: Build (iOS Simulator)
     runs-on: macos-latest

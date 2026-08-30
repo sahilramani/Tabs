@@ -55,58 +55,53 @@
   </header>
 
   <main style="max-width: 1080px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1;">
-
     <section style="padding: 72px 0 34px; max-width: 720px;">
       <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; color: #30D158; text-transform: uppercase; margin-bottom: 16px;">// Privacy</div>
-      <h1 style="margin: 0 0 18px; font-size: clamp(34px, 6vw, 54px); line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; color: #F3F6F4;">Tabs collects nothing.</h1>
-      <p style="margin: 0; color: #9AA8A0; font-size: 17px; line-height: 1.65;">Everything the app does happens on your device. This page mirrors <a href="https://github.com/sahilramani/Tabs/blob/main/PRIVACY.md" style="color: #30D158;">PRIVACY.md</a> in the repository, which is versioned alongside the code that implements it.</p>
+      <h1 style="margin: 0 0 18px; font-size: clamp(34px, 6vw, 54px); line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; color: #F3F6F4;">Privacy policy</h1>
+      <p style="margin: 0 0 12px; color: #9AA8A0; font-size: 17px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Tabs collects nothing.</span> Everything the app does happens on your device.</p>
+      <p style="margin: 0 0 12px; color: #9AA8A0; font-size: 17px; line-height: 1.65;">Also published at <a href="https://www.sahilramani.com/Tabs/privacy.html" style="color: #30D158;">https://www.sahilramani.com/Tabs/privacy.html</a>, which is generated from this file by <code style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13.5px; color: #9FE8B4; background: rgba(48,209,88,0.10); padding: 1px 5px; border-radius: 5px;">scripts/build-privacy-page.py</code>. Edit here; the page is rebuilt from it.</p>
     </section>
 
     <section style="padding: 0 0 22px; max-width: 720px;">
       <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 26px 28px;">
         <h2 style="margin: 0 0 12px; font-size: clamp(20px, 3vw, 25px); letter-spacing: -0.02em; font-weight: 800; color: #F3F6F4;">What the app processes</h2>
         <ul style="margin: 0; padding-left: 20px;">
-          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Screenshots you pick</span> are read on-device with Apple's Vision framework.</li>
-          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">PDF statements you pick</span> are read on-device with Apple's PDFKit.</li>
-          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Detected subscriptions</span> — name, price, billing cycle, and the statement lines behind them — are stored in a local SwiftData database inside the app's sandbox.</li>
-          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Renewal reminders</span> are local notifications scheduled on the device.</li>
+          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Screenshots you pick</span> are OCR&#x27;d on-device with Apple&#x27;s Vision framework.</li>
+          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">PDF statements you pick</span> are read on-device with Apple&#x27;s PDFKit.</li>
+          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Detected subscriptions</span> (name, price, billing cycle, and the statement lines that support them) are stored in a local SwiftData database inside the app&#x27;s sandbox.</li>
+          <li style="margin: 0; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Renewal reminders</span> are local notifications scheduled on the device.</li>
         </ul>
       </div>
     </section>
 
-
     <section style="padding: 0 0 22px; max-width: 720px;">
       <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 26px 28px;">
         <h2 style="margin: 0 0 12px; font-size: clamp(20px, 3vw, 25px); letter-spacing: -0.02em; font-weight: 800; color: #F3F6F4;">What leaves your device</h2>
-        <p style="margin: 0 0 12px; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Nothing. The app has no networking layer: no analytics, no crash reporting, no telemetry, no third-party SDKs, and no accounts.</p>
-        <p style="margin: 0; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Because the source is public, this is verifiable rather than a promise. There are no networking imports in the app target, and the <a href="https://github.com/sahilramani/Tabs/blob/main/Tabs/PrivacyInfo.xcprivacy" style="color: #30D158;">privacy manifest</a> declares no data collection and no tracking.</p>
+        <p style="margin: 0; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Nothing. The app has no networking layer — no analytics, no crash reporting, no telemetry, no third-party SDKs, no accounts. The source is public, so this is verifiable: there are no <code style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13.5px; color: #9FE8B4; background: rgba(48,209,88,0.10); padding: 1px 5px; border-radius: 5px;">URLSession</code>/network imports in the app target, and the <a href="https://github.com/sahilramani/Tabs/blob/main/Tabs/PrivacyInfo.xcprivacy" style="color: #30D158;">privacy manifest</a> declares no data collection and no tracking.</p>
       </div>
     </section>
-
 
     <section style="padding: 0 0 22px; max-width: 720px;">
       <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 26px 28px;">
         <h2 style="margin: 0 0 12px; font-size: clamp(20px, 3vw, 25px); letter-spacing: -0.02em; font-weight: 800; color: #F3F6F4;">Data retention and deletion</h2>
-        <p style="margin: 0; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Your data lives only in the app's local store. Deleting a subscription moves it to the in-app Trash; emptying the Trash removes it permanently. Deleting the app removes everything.</p>
+        <p style="margin: 0; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Your data lives only in the app&#x27;s local store. Deleting a subscription moves it to the in-app Trash; emptying the Trash removes it permanently. Deleting the app removes everything.</p>
       </div>
     </section>
-
 
     <section style="padding: 0 0 22px; max-width: 720px;">
       <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 26px 28px;">
         <h2 style="margin: 0 0 12px; font-size: clamp(20px, 3vw, 25px); letter-spacing: -0.02em; font-weight: 800; color: #F3F6F4;">Permissions</h2>
         <ul style="margin: 0; padding-left: 20px;">
-          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Photo library</span> — a read-only picker, used only when you choose "Scan a screenshot". The app sees only the images you select.</li>
+          <li style="margin: 0 0 9px; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Photo library</span> — read-only picker, only when you choose &quot;Scan a screenshot&quot;. The app sees only the images you select.</li>
           <li style="margin: 0; color: #9AA8A0; font-size: 15px; line-height: 1.65;"><span style="color: #F3F6F4; font-weight: 600;">Notifications</span> — optional, for renewal reminders. Denying it disables reminders and nothing else.</li>
         </ul>
       </div>
     </section>
 
-
     <section style="padding: 0 0 22px; max-width: 720px;">
       <div style="background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 26px 28px;">
         <h2 style="margin: 0 0 12px; font-size: clamp(20px, 3vw, 25px); letter-spacing: -0.02em; font-weight: 800; color: #F3F6F4;">Changes</h2>
-        <p style="margin: 0; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Any change to this policy appears in the file's <a href="https://github.com/sahilramani/Tabs/commits/main/PRIVACY.md" style="color: #30D158;">git history</a>. The policy is versioned with the code that implements it.</p>
+        <p style="margin: 0; color: #9AA8A0; font-size: 15.5px; line-height: 1.7;">Any change to this policy will appear in this file&#x27;s git history — the policy is versioned with the code that implements it.</p>
       </div>
     </section>
 

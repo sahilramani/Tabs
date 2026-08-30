@@ -2,7 +2,9 @@
 
 **Tabs collects nothing.** Everything the app does happens on your device.
 
-Also published at <https://www.sahilramani.com/Tabs/privacy.html>. The two mirror each other; edit both, or neither.
+Also published at <https://www.sahilramani.com/Tabs/privacy.html>, which is
+generated from this file by `scripts/build-privacy-page.py`. Edit here; the
+page is rebuilt from it.
 
 ## What the app processes
 
