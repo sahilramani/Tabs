@@ -23,6 +23,9 @@ with no dependency on any of the above, and that is what GitHub Pages serves.
 | `Tabs Contact.dc.html` | `docs/contact.html` |
 | `Tabs App Screens.dc.html` | — (app design reference, not a web page) |
 
+`docs/privacy.html` has no source here — it was hand-authored from the
+contact page's markup, so edit that file directly.
+
 They live outside `docs/` on purpose: `docs/` is the GitHub Pages root, so
 anything in it is published, and these are not pages to serve.
 

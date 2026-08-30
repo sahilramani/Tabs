@@ -2,6 +2,8 @@
 
 **Tabs collects nothing.** Everything the app does happens on your device.
 
+Also published at <https://www.sahilramani.com/Tabs/privacy.html>. The two mirror each other; edit both, or neither.
+
 ## What the app processes
 
 - **Screenshots you pick** are OCR'd on-device with Apple's Vision framework.
