@@ -44,6 +44,10 @@ struct ContentView: View {
     // Manual-add sheet state.
     @State private var isShowingAddSheet = false
 
+    // Sample-statement preview sheet: read the fixtures before importing them.
+    @State private var isShowingSampleStatements = false
+    @State private var isPendingSampleImport = false
+
     // About sheet state (gear button).
     @State private var isShowingAbout = false
 
@@ -175,6 +179,11 @@ struct ContentView: View {
             // Manual entry path.
             .sheet(isPresented: $isShowingAddSheet) {
                 AddSubscriptionView()
+            }
+            // Sample statements: readable first, imported on confirmation.
+            .sheet(isPresented: $isShowingSampleStatements,
+                   onDismiss: performPendingSampleImport) {
+                SampleStatementsView { isPendingSampleImport = true }
             }
             .sheet(isPresented: $isShowingAbout) {
                 AboutView()
@@ -533,6 +542,21 @@ struct ContentView: View {
             #endif
         case .addManually:
             isShowingAddSheet = true
+        case .trySampleStatements:
+            isShowingSampleStatements = true
+        }
+    }
+
+    /// Runs after the sample sheet is gone, matching how the pickers are
+    /// presented — importing mid-dismissal drops the scanning overlay.
+    private func performPendingSampleImport() {
+        guard isPendingSampleImport else { return }
+        isPendingSampleImport = false
+        let urls = SampleStatements.urls
+        if urls.isEmpty {
+            errorMessage = "The sample statements are missing from this build."
+        } else {
+            handlePickedPDFs(urls)
         }
     }
 

@@ -18,6 +18,9 @@ enum ImportAction {
     case importPDF
     case importFolder
     case addManually
+    /// Import the synthetic statements bundled with the app, so the detector
+    /// can be tried without handing it a real bank statement.
+    case trySampleStatements
 }
 
 struct ImportSheetView: View {
@@ -30,11 +33,12 @@ struct ImportSheetView: View {
         VStack(alignment: .leading, spacing: 20) {
             header
             optionCard
+            sampleCard
             footer
             Spacer(minLength: 0)
         }
         .padding(20)
-        .presentationDetents([.height(470)])
+        .presentationDetents([.height(560)])
         .presentationDragIndicator(.visible)
     }
 
@@ -86,6 +90,23 @@ struct ImportSheetView: View {
                 title: "Add manually",
                 subtitle: "Name, price, and billing cycle",
                 action: .addManually
+            )
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(Theme.bgElevated)
+        )
+    }
+
+    /// Four months of fictional statements ship with the app. Detection needs
+    /// at least three sightings of a charge, so one month would find nothing.
+    private var sampleCard: some View {
+        VStack(spacing: 0) {
+            option(
+                icon: "wand.and.stars",
+                title: "Try sample statements",
+                subtitle: "Four fictional months — no data of your own",
+                action: .trySampleStatements
             )
         }
         .background(
