@@ -9,6 +9,20 @@ recurring charges by scanning bank statements — **100% on-device**. Your
 screenshots, PDFs, and financial data **never leave your phone**. There is no
 networking layer in this app by design.
 
+## Get the app
+
+The beta is open on [TestFlight](https://testflight.apple.com/join/5kyPqh7J) —
+iPhone, iOS 17 or later, no invite needed. It ships with four months of
+fictional statements from a bank that does not exist, so you can watch the
+whole detection flow without pointing it at your own data.
+
+Alpha software: detection accuracy depends heavily on how your bank formats
+its statements, and only a handful of formats have been tested. Reports of
+charges it misses or misreads are the most useful feedback, especially from
+credit unions, regional banks, and banks outside the US.
+
+To build from source instead, see [Requirements](#requirements).
+
 ## How it works
 
 1. **Import** a subscription any of four ways from the add sheet:
@@ -126,6 +140,6 @@ subscription name.
 ### Trademarks
 
 Product and service names in this repository — in the detection catalog, the
-sample statement, and the screenshots — are trademarks of their respective
+sample statements, and the screenshots — are trademarks of their respective
 owners. They appear only to identify the services Tabs detects. Tabs is not
 affiliated with, endorsed by, or sponsored by any of them.
