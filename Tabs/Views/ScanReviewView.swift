@@ -271,6 +271,10 @@ struct ScanReviewView: View {
 /// One detected candidate: selection circle, editable name/price, chip row,
 /// and (when expanded) the statement lines it was detected from.
 private struct CandidateCard: View {
+
+    /// Raw statement lines, already small at 11pt, so they especially need
+    /// to grow with the user's text size.
+    @ScaledMetric(relativeTo: .caption2) private var evidenceSize: CGFloat = 11
     @Binding var draft: ScannedSubscriptionDraft
     let isExpanded: Bool
     let onToggleEvidence: () -> Void
@@ -408,7 +412,7 @@ private struct CandidateCard: View {
                     Text(transaction.formattedAmount)
                         .foregroundStyle(Theme.accent)
                 }
-                .font(.system(size: 11, design: .monospaced))
+                .font(.system(size: evidenceSize, design: .monospaced))
             }
         }
         .padding(10)

@@ -19,6 +19,9 @@ import SwiftUI
 import SwiftData
 
 struct SubscriptionDetailView: View {
+
+    /// Subscription name in the header; scales with the user's text size.
+    @ScaledMetric(relativeTo: .title) private var nameSize: CGFloat = 28
     @Bindable var subscription: Subscription
 
     @Environment(\.dismiss) private var dismiss
@@ -129,7 +132,7 @@ struct SubscriptionDetailView: View {
             BrandAvatar(name: subscription.name, size: 76)
 
             Text(subscription.name)
-                .font(.system(size: 28, weight: .bold))
+                .font(.system(size: nameSize, weight: .bold))
                 .foregroundStyle(Theme.label)
                 .multilineTextAlignment(.center)
 

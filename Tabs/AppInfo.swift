@@ -40,6 +40,12 @@ struct StageBadge: View {
                 .padding(.vertical, 3)
                 .background(Theme.warning.opacity(0.16), in: Capsule())
                 .overlay(Capsule().strokeBorder(Theme.warning.opacity(0.35), lineWidth: 1))
+                // Toolbar chrome sharing width with the gear button: the pill
+                // truncated to "ALP…" at large sizes, so hold its ideal width
+                // and stop scaling before the accessibility range. VoiceOver
+                // still reads the label below.
+                .fixedSize()
+                .dynamicTypeSize(...DynamicTypeSize.xxLarge)
                 .accessibilityLabel("\(stage) build")
         }
     }

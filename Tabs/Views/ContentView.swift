@@ -16,6 +16,10 @@ import UniformTypeIdentifiers
 import UIKit
 
 struct ContentView: View {
+
+    /// The spend figure is a display numeral, so it keeps its designed size
+    /// but tracks the user's text size rather than ignoring it.
+    @ScaledMetric(relativeTo: .largeTitle) private var spendFigureSize: CGFloat = 56
     /// Saved subscriptions, soonest renewal first — the app's job is to catch
     /// what's about to charge, so the most actionable rows sit at the top.
     @Query(sort: \Subscription.renewalDate, order: .forward)
@@ -406,7 +410,7 @@ struct ContentView: View {
                 .foregroundStyle(Theme.secondary)
 
             Text(Self.dimmedCents(CurrencyFormat.string(from: totalMonthlySpend, code: dominantCurrencyCode)))
-                .font(.system(size: 56, weight: .heavy))
+                .font(.system(size: spendFigureSize, weight: .heavy))
                 .monospacedDigit()
                 .foregroundStyle(Theme.label)
                 .lineLimit(1)
@@ -808,30 +812,27 @@ private struct AddButtonStyle: ViewModifier {
 private struct SubscriptionRow: View {
     let subscription: Subscription
 
+    /// Side-by-side name and price stop fitting at accessibility text sizes —
+    /// the name hyphenates and the price clips — so the row stacks instead.
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        HStack(spacing: 12) {
-            BrandAvatar(name: subscription.name)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(subscription.name)
-                    .font(.headline)
-                    .foregroundStyle(Theme.label)
-                subtitle
-                    .font(.footnote)
-            }
-
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 1) {
-                Text(subscription.formattedPrice)
-                    .font(.body.weight(.semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(Theme.label)
-                    .strikethrough(!subscription.isActive, color: Theme.tertiary)
-                if subscription.isActive, subscription.billingCycle != .monthly {
-                    Text(subscription.billingCycle.shortSuffix)
-                        .font(.caption2)
-                        .foregroundStyle(Theme.secondary)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 12) {
+                        BrandAvatar(name: subscription.name)
+                        nameAndSubtitle
+                    }
+                    priceAndCycle
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            } else {
+                HStack(spacing: 12) {
+                    BrandAvatar(name: subscription.name)
+                    nameAndSubtitle
+                    Spacer()
+                    priceAndCycle
                 }
             }
         }
@@ -840,6 +841,32 @@ private struct SubscriptionRow: View {
         .opacity(subscription.isActive ? 1 : 0.55)
         // One element for VoiceOver: "Netflix, renews in 3 days, $15.49".
         .accessibilityElement(children: .combine)
+    }
+
+    private var nameAndSubtitle: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(subscription.name)
+                .font(.headline)
+                .foregroundStyle(Theme.label)
+            subtitle
+                .font(.footnote)
+        }
+    }
+
+    /// Trailing-aligned beside the name, leading-aligned once stacked.
+    private var priceAndCycle: some View {
+        VStack(alignment: dynamicTypeSize.isAccessibilitySize ? .leading : .trailing, spacing: 1) {
+            Text(subscription.formattedPrice)
+                .font(.body.weight(.semibold))
+                .monospacedDigit()
+                .foregroundStyle(Theme.label)
+                .strikethrough(!subscription.isActive, color: Theme.tertiary)
+            if subscription.isActive, subscription.billingCycle != .monthly {
+                Text(subscription.billingCycle.shortSuffix)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.secondary)
+            }
+        }
     }
 
     /// Renewal proximity while active — in the accent color when it's ≤3 days
