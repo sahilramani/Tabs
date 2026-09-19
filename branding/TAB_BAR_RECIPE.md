@@ -55,6 +55,36 @@ break keeps it legible as a window-with-a-tab, never a dot. If 29 px muddies:
 drop the back inactive tab and the ghost rows; keep field, middle tab, page,
 active tab.
 
+## Layered icon (iOS 26+)
+
+iOS 26 and later render app icons from layered artwork, applying the Liquid
+Glass treatment and the light, dark, tinted and clear variants themselves. The
+flat `icon-1024.png` still works and is what ships today, but it only gets an
+automatic approximation of that treatment.
+
+Icon Composer (inside Xcode, `Xcode.app/Contents/Applications`) builds the
+`.icon` bundle. It is GUI-only: no command line, and the format is handled by
+private frameworks with no published schema, so the bundle has to be assembled
+by hand. The layers it needs are scripted:
+
+```sh
+./scripts/make-icon-layers.py    # writes branding/icon-layers/
+```
+
+That emits four 1024 PNGs, back to front, with alpha preserved above the
+background:
+
+| Layer | Contents |
+|---|---|
+| `0-background` | the radial field, opaque, full bleed |
+| `1-tabs` | the two inactive tabs |
+| `2-page` | the mint page and its ghost rows |
+| `3-active` | the bloom and the active green tab |
+
+Open Icon Composer, drop the four in as separate layers in that order, and
+export to `Tabs/AppIcon.icon`. Keep `icon-1024.png` — it remains the fallback
+for iOS 17 through 25.
+
 ## Safe zone
 
 Mark extent: x 152–910, y 232–888 — inside the outer-8% safe zone on all sides.
