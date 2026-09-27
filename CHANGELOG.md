@@ -9,7 +9,28 @@ heuristics may still change between releases.
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+- `scripts/make-icon-layers.py` splits the icon artwork into the four layers
+  Icon Composer needs for a layered iOS 26+ app icon, asserting every shape in
+  the source SVG lands in exactly one layer.
+
+### Changed
+- The site points at the open TestFlight beta instead of an App Store release
+  that has not shipped, and no longer advertises iPad support.
+
+### Fixed
+- The home and detail screens survive accessibility text sizes. The
+  subscription name hyphenated mid-word, the price clipped to "$1 5.4", and
+  the ALPHA badge truncated to "ALP..."; the spend figure, subscription name,
+  and statement-evidence lines now scale with the user's text size, and rows
+  stack vertically once past the accessibility threshold.
+- A merchant seen only once no longer arrives pre-selected as a monthly
+  subscription. A single sighting leaves no gap to measure a cycle from, so the
+  draft is badged "Seen once — check the cycle" and left deselected rather than
+  adding a guessed monthly amount to the spend total. An annual charge like
+  Amazon Prime was being counted as $151.68 a month.
+- `make run` no longer fails when Simulator.app is missing from an Xcode
+  install; the app still installs and launches headlessly.
 
 ## [0.3.0] - 2026-08-30
 

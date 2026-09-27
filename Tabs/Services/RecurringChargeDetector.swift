@@ -82,7 +82,12 @@ struct RecurringChargeDetector {
                 // charges reveals the cycle, and the last charge anchors the
                 // next renewal far better than "one month from scan day".
                 let dates = transactions.compactMap(\.date)
-                let cycle = Self.inferredCycle(fromDates: dates) ?? .monthly
+                let inferredCycle = Self.inferredCycle(fromDates: dates)
+                // Fewer than two distinct dates leaves no gap to measure, so
+                // any cycle here is a default, not a reading.
+                let distinctDays = Set(dates.map { Calendar.current.startOfDay(for: $0) })
+                let cycleUnknown = inferredCycle == nil && distinctDays.count < 2
+                let cycle = inferredCycle ?? .monthly
                 let renewalDate = dates.max().map { Self.nextRenewal(after: $0, cycle: cycle) }
 
                 return ScannedSubscriptionDraft(
@@ -91,9 +96,10 @@ struct RecurringChargeDetector {
                     billingCycle: cycle,
                     currencyCode: Self.dominantCurrency(in: cluster),
                     renewalDate: renewalDate,
-                    isSelected: !amountsVary,
+                    isSelected: !amountsVary && !cycleUnknown,
                     transactions: transactions,
-                    amountsVary: amountsVary
+                    amountsVary: amountsVary,
+                    cycleUnknown: cycleUnknown
                 )
             }
         }

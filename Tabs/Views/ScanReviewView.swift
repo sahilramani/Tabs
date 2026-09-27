@@ -355,6 +355,9 @@ private struct CandidateCard: View {
                 if draft.amountsVary {
                     ReviewChip(text: "Amounts vary — looks one-off", style: .gray)
                 }
+                if draft.cycleUnknown {
+                    ReviewChip(text: "Seen once — check the cycle", style: .gray)
+                }
 
                 // Cycle chip doubles as the editor. Changing it realigns the
                 // renewal date in the setter, so a draft saved as Yearly

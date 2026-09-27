@@ -409,6 +409,33 @@ final class RecurringChargeDetectorTests: XCTestCase {
         XCTAssertEqual(detector.drafts(from: subscription).count, 1)
     }
 
+    func testDraftsFlagsUninferableCycleAndLeavesItDeselected() throws {
+        // A single sighting gives no gap to measure, so "monthly" is a guess.
+        // Pre-selecting that guess silently adds $151.68/mo to the spend total.
+        let statement = "2026-02-11 AMAZON PRIME XY12AB34 AMZN.COM/BILL WA 151.68"
+
+        let draft = try XCTUnwrap(detector.drafts(from: statement).first)
+
+        XCTAssertTrue(draft.cycleUnknown)
+        XCTAssertFalse(draft.isSelected)
+    }
+
+    func testDraftsLeavesInferredCycleSelected() throws {
+        // Four sightings a month apart: the cycle is measured, not guessed.
+        let statement = """
+        2026-03-02 NETFLIX.COM 15.49
+        2026-04-02 NETFLIX.COM 15.49
+        2026-05-02 NETFLIX.COM 15.49
+        2026-06-02 NETFLIX.COM 15.49
+        """
+
+        let draft = try XCTUnwrap(detector.drafts(from: statement).first)
+
+        XCTAssertFalse(draft.cycleUnknown)
+        XCTAssertTrue(draft.isSelected)
+        XCTAssertEqual(draft.billingCycle, .monthly)
+    }
+
     func testDraftsKeepsAmazonPrimeRenewalButNotMarketplaceOrders() throws {
         let statement = """
         2026-02-11 AMAZON PRIME XY12AB34 AMZN.COM/BILL WA 151.68

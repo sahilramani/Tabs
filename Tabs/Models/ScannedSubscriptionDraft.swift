@@ -80,6 +80,11 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
     /// subscription, so it arrives deselected and badged for the user to judge.
     var amountsVary: Bool = false
 
+    /// True when the cycle could not be measured — a single sighting has no
+    /// gap to read one from, so `billingCycle` is a default rather than a
+    /// finding. Such a draft arrives deselected for the user to confirm.
+    var cycleUnknown: Bool = false
+
     init(
         name: String,
         price: Decimal,
@@ -88,7 +93,8 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
         renewalDate: Date? = nil,
         isSelected: Bool = true,
         transactions: [ScannedTransaction] = [],
-        amountsVary: Bool = false
+        amountsVary: Bool = false,
+        cycleUnknown: Bool = false
     ) {
         self.name = name
         self.price = price
@@ -98,6 +104,7 @@ struct ScannedSubscriptionDraft: Identifiable, Hashable {
         self.isSelected = isSelected
         self.transactions = transactions
         self.amountsVary = amountsVary
+        self.cycleUnknown = cycleUnknown
     }
 
     /// Switches to `cycle` and recomputes `renewalDate` to match: one cycle

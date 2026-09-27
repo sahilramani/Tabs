@@ -30,7 +30,10 @@ test: ## Run the unit test suite on a simulator
 run: ## Build, install, and launch on a simulator (SEED=1 for demo data; SCREEN=import|review|detail to open a screen)
 	xcodebuild build -scheme $(SCHEME) -destination "id=$(SIM)" -derivedDataPath $(DERIVED)
 	-xcrun simctl boot $(SIM) 2>/dev/null
-	open -a Simulator
+	# Best effort: simctl drives the device headlessly, and Simulator.app
+	# is absent from some Xcode installs. Don't fail the run over it.
+	-@open -b com.apple.iphonesimulator 2>/dev/null || \
+		echo "note: Simulator.app not found; app installed and launched headlessly"
 	xcrun simctl install $(SIM) "$(APP_SIM)"
 	xcrun simctl launch $(SIM) $(BUNDLE_ID) $(if $(SEED),--seed-demo,) $(if $(SCREEN),--seed-$(SCREEN),)
 

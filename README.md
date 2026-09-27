@@ -46,8 +46,8 @@ from the spend total, reminders stopped) or **deleted** — deletes move to a
 
 ## Requirements
 
-- Xcode 26+ (the design layer uses the iOS 26 `glassEffect` symbol; see the
-  build note below)
+- Xcode 26 or later (the design layer uses the iOS 26 `glassEffect` symbol;
+  see the build note below). Builds clean on Xcode 27.
 - iOS 17.0+ at runtime
 
 Open `Tabs.xcodeproj` and run on a device or simulator.
