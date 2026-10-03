@@ -1,5 +1,10 @@
 # TestFlight checklist — 0.2.0, internal testing
 
+**Status:** Done. 0.2.0 reached internal testing and the beta has since
+opened to external testers through a public link (see the README).
+[RELEASING.md](../RELEASING.md) is the current release process. The iPad and
+Mac Catalyst item under *Later* is still open. Kept as a record.
+
 Repo side is done: iPhone-only, portrait-locked, 0.2.0 tagged, signing
 wired to `ASC_TEAM_ID` (`2U76H9X5Z9`). Verified in the built binary — `UIDeviceFamily [1]`,
 `CFBundleShortVersionString 0.2.0`, `ITSAppUsesNonExemptEncryption false`,
